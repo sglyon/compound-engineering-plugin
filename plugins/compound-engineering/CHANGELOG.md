@@ -5,6 +5,12 @@ All notable changes to the compound-engineering plugin will be documented in thi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.9.3] - 2025-12-05
+
+### Changed
+
+- **`/plan` command** - Added "Open plan in editor" as the first option in post-generation menu. This opens the plan file in the user's default editor for review before deciding on next steps.
+
 ## [2.9.2] - 2025-12-04
 
 ### Added
