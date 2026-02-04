@@ -5,6 +5,8 @@
 
 A Claude Code plugin marketplace featuring the **Compound Engineering Plugin** — tools that make each unit of engineering work easier than the last.
 
+> **Fork notice:** This is a fork of [Kieran Klaassen's](https://github.com/kieranklaassen) original [compound-engineering-plugin](https://github.com/EveryInc/compound-engineering-plugin). The original plugin and its compounding engineering philosophy are entirely Kieran's work. This fork replaces the file-based todo tracking system (`todos/` directory with markdown files) with [Beads](https://github.com/steveyegge/beads), a git-backed issue tracker designed for AI coding agents.
+
 ## Claude Code Install
 
 ```bash
