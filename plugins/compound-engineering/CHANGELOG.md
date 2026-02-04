@@ -5,6 +5,29 @@ All notable changes to the compound-engineering plugin will be documented in thi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.1.0] - 2026-02-04
+
+### Added
+
+- **`plan-to-beads` skill** - Convert plan documents into fully tracked Beads issues
+  - Parses plan files (from `/workflows:plan` or `/deepen-plan`) to identify discrete work items
+  - Creates a Beads epic for the overall plan with child issues for each task
+  - Sets up dependency graph between issues (phase ordering, data dependencies, testing)
+  - Assigns priorities, types, and labels based on plan content
+  - Validates task granularity and presents manifest for user approval before creation
+  - Integrates with `/workflows:work` for execution after issue creation
+
+### Changed
+
+- **`/workflows:plan` command** - Added "Convert to Beads issues" as post-generation option (invokes `plan-to-beads` skill)
+- **`/workflows:work` command** - Step 3 now checks for existing Beads issues before creating new ones; invokes `plan-to-beads` skill instead of inline issue creation to avoid duplicates
+
+### Summary
+
+- 24 agents, 24 commands, 13 skills, 1 MCP server
+
+---
+
 ## [3.0.0] - 2026-02-04
 
 ### Removed

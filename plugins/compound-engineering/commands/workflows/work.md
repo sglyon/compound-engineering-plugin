@@ -72,17 +72,24 @@ This command takes a work document (plan, specification, or todo file) and execu
    - You want to keep the default branch clean while experimenting
    - You plan to switch between branches frequently
 
-3. **Create Issue Tracker**
-   - Use Beads (`bd`) to break plan into actionable issues
-   - Create an epic for the overall plan, then child issues for each task:
-     ```bash
-     bd create "Epic: <plan title>" -t epic -p 1
-     bd create "Task description" -t task --parent <epic-id> -p 1
-     ```
-   - Add dependencies between tasks: `bd dep add <blocked> <blocker>`
-   - Prioritize based on what needs to be done first
-   - Include testing and quality check tasks
-   - Keep tasks specific and completable
+3. **Create or Reuse Issue Tracker**
+
+   First, check if Beads issues already exist for this plan (e.g., from a prior `plan-to-beads` run):
+
+   ```bash
+   # Search for an existing epic matching the plan title
+   bd search "<plan title>" --json
+   ```
+
+   **If matching epic and child issues exist:**
+   - Announce: "Found existing Beads epic `<id>` with `<N>` child issues. Using those."
+   - Run `bd ready --sort priority` to see what's ready to start
+   - Skip to Phase 2
+
+   **If no existing issues found:**
+   - Invoke the `plan-to-beads` skill with the plan file path to create a full epic with child issues, dependency graph, and priority assignments
+   - If `bd` is not initialized, run `bd init` first
+   - After the skill completes, run `bd ready --sort priority` to confirm issues are ready
 
 ### Phase 2: Execute
 
