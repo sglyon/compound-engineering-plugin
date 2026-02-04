@@ -1,6 +1,6 @@
 # Compound Marketplace
 
-[![Build Status](https://github.com/EveryInc/compound-engineering-plugin/actions/workflows/ci.yml/badge.svg)](https://github.com/EveryInc/compound-engineering-plugin/actions/workflows/ci.yml)
+[![Build Status](https://github.com/sglyon/compound-engineering-plugin/actions/workflows/ci.yml/badge.svg)](https://github.com/sglyon/compound-engineering-plugin/actions/workflows/ci.yml)
 [![npm](https://img.shields.io/npm/v/@every-env/compound-plugin)](https://www.npmjs.com/package/@every-env/compound-plugin)
 
 A Claude Code plugin marketplace featuring the **Compound Engineering Plugin** â€” tools that make each unit of engineering work easier than the last.
@@ -8,7 +8,7 @@ A Claude Code plugin marketplace featuring the **Compound Engineering Plugin** â
 ## Claude Code Install
 
 ```bash
-/plugin marketplace add https://github.com/EveryInc/compound-engineering-plugin
+/plugin marketplace add https://github.com/sglyon/compound-engineering-plugin
 /plugin install compound-engineering
 ```
 
