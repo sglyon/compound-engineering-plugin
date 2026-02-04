@@ -112,7 +112,7 @@ Run these agents in parallel:
 
 After all research steps complete, consolidate findings:
 
-- Document relevant file paths from repo research (e.g., `app/services/example_service.rb:42`)
+- Document relevant file paths from repo research (e.g., `src/services/userService.ts:42`)
 - **Include relevant institutional learnings** from `docs/solutions/` (key insights, gotchas to avoid)
 - Note external documentation URLs and best practices (if external research was done)
 - List related issues or PRs discovered
@@ -196,14 +196,15 @@ date: YYYY-MM-DD
 
 ## MVP
 
-### test.rb
+### test.ts
 
-```ruby
-class Test
-  def initialize
-    @name = "test"
-  end
-end
+```typescript
+class Test {
+  name: string;
+  constructor() {
+    this.name = "test";
+  }
+}
 ```
 
 ## References
@@ -433,13 +434,11 @@ Apply best practices for clarity and actionability, making the issue easy to sca
 # Good example with syntax highlighting and line references
 
 
-```ruby
-# app/services/user_service.rb:42
-def process_user(user)
-
-# Implementation here
-
-end
+```typescript
+// src/services/userService.ts:42
+function processUser(user: User) {
+  // Implementation here
+}
 ```
 
 # Collapsible error logs
@@ -498,7 +497,7 @@ After writing the plan file, use the **AskUserQuestion tool** to present these o
 **Options:**
 1. **Open plan in editor** - Open the plan file for review
 2. **Run `/deepen-plan`** - Enhance each section with parallel research agents (best practices, performance, UI)
-3. **Run `/plan_review`** - Get feedback from reviewers (DHH, Kieran, Simplicity)
+3. **Run `/plan_review`** - Get feedback from reviewers (Python, TypeScript, Simplicity)
 4. **Start `/workflows:work`** - Begin implementing this plan locally
 5. **Start `/workflows:work` on remote** - Begin implementing in Claude Code on the web (use `&` to run in background)
 6. **Create Issue** - Create issue in project tracker (GitHub/Linear)

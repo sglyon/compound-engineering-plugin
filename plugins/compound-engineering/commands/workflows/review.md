@@ -65,19 +65,18 @@ If a review agent flags any file in these directories for cleanup or removal, di
 
 Run ALL or most of these agents at the same time:
 
-1. Task kieran-rails-reviewer(PR content)
-2. Task dhh-rails-reviewer(PR title)
-3. If turbo is used: Task rails-turbo-expert(PR content)
-4. Task git-history-analyzer(PR content)
-5. Task dependency-detective(PR content)
-6. Task pattern-recognition-specialist(PR content)
-7. Task architecture-strategist(PR content)
-8. Task code-philosopher(PR content)
-9. Task security-sentinel(PR content)
-10. Task performance-oracle(PR content)
-11. Task devops-harmony-analyst(PR content)
-12. Task data-integrity-guardian(PR content)
-13. Task agent-native-reviewer(PR content) - Verify new features are agent-accessible
+1. Task sglyon-python-reviewer(PR content)
+2. Task sglyon-typescript-reviewer(PR content)
+3. Task git-history-analyzer(PR content)
+4. Task dependency-detective(PR content)
+5. Task pattern-recognition-specialist(PR content)
+6. Task architecture-strategist(PR content)
+7. Task code-philosopher(PR content)
+8. Task security-sentinel(PR content)
+9. Task performance-oracle(PR content)
+10. Task devops-harmony-analyst(PR content)
+11. Task data-integrity-guardian(PR content)
+12. Task agent-native-reviewer(PR content) - Verify new features are agent-accessible
 
 </parallel_tasks>
 
@@ -87,15 +86,15 @@ Run ALL or most of these agents at the same time:
 
 These agents are run ONLY when the PR matches specific criteria. Check the PR files list to determine if they apply:
 
-**If PR contains database migrations (db/migrate/*.rb files) or data backfills:**
+**If PR contains database migrations or data backfills:**
 
-14. Task data-migration-expert(PR content) - Validates ID mappings match production, checks for swapped values, verifies rollback safety
-15. Task deployment-verification-agent(PR content) - Creates Go/No-Go deployment checklist with SQL verification queries
+13. Task data-migration-expert(PR content) - Validates ID mappings match production, checks for swapped values, verifies rollback safety
+14. Task deployment-verification-agent(PR content) - Creates Go/No-Go deployment checklist with SQL verification queries
 
 **When to run migration agents:**
-- PR includes files matching `db/migrate/*.rb`
+- PR includes migration files (Alembic, Django, Drizzle, Knex, GORM, goose, etc.)
 - PR modifies columns that store IDs, enums, or mappings
-- PR includes data backfill scripts or rake tasks
+- PR includes data backfill scripts
 - PR changes how data is read/written (e.g., changing from FK to string column)
 - PR title/body mentions: migration, backfill, data transformation, ID mapping
 
@@ -297,7 +296,7 @@ Sub-agents can:
    bd dep add <blocked-id> <blocker-id>
    ```
 
-**Tagging:** Always add `code-review` label, plus: `security`, `performance`, `architecture`, `rails`, `quality`, etc.
+**Tagging:** Always add `code-review` label, plus: `security`, `performance`, `architecture`, `quality`, etc.
 
 #### Step 3: Summary Report
 
@@ -333,7 +332,8 @@ After creating all issues, present comprehensive summary:
 
 ### Review Agents Used:
 
-- kieran-rails-reviewer
+- sglyon-python-reviewer
+- sglyon-typescript-reviewer
 - security-sentinel
 - performance-oracle
 - architecture-strategist
@@ -403,7 +403,7 @@ After creating all issues, present comprehensive summary:
 | Indicator | Project Type |
 |-----------|--------------|
 | `*.xcodeproj`, `*.xcworkspace`, `Package.swift` (iOS) | iOS/macOS |
-| `Gemfile`, `package.json`, `app/views/*`, `*.html.*` | Web |
+| `package.json`, `requirements.txt`, `go.mod`, `*.html`, `*.tsx` | Web |
 | Both iOS files AND web files | Hybrid (test both) |
 
 </detect_project_type>
@@ -426,7 +426,7 @@ After presenting the Summary Report, offer appropriate testing based on project 
 2. No - skip
 ```
 
-**For Hybrid Projects (e.g., Rails + Hotwire Native):**
+**For Hybrid Projects (e.g., Web + Native):**
 ```markdown
 **"Want to run end-to-end tests?"**
 1. Web only - run `/test-browser`

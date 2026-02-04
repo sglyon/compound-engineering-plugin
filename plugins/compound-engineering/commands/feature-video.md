@@ -21,7 +21,7 @@ This command creates professional video walkthroughs of features for PR document
 ## Prerequisites
 
 <requirements>
-- Local development server running (e.g., `bin/dev`, `rails server`)
+- Local development server running (e.g., `bun dev`, `npm run dev`, `uvicorn main:app`)
 - agent-browser CLI installed
 - Git repository with a PR to document
 - `ffmpeg` installed (for video conversion)
@@ -79,10 +79,10 @@ gh pr view [number] --json files -q '.files[].path'
 
 | File Pattern | Route(s) |
 |-------------|----------|
-| `app/views/users/*` | `/users`, `/users/:id`, `/users/new` |
-| `app/controllers/settings_controller.rb` | `/settings` |
-| `app/javascript/controllers/*_controller.js` | Pages using that Stimulus controller |
-| `app/components/*_component.rb` | Pages rendering that component |
+| `src/app/*` (Next.js) | Corresponding routes |
+| `src/pages/*` | Corresponding routes |
+| `src/components/*` | Pages using those components |
+| `app/routers/*.py` (FastAPI) | Corresponding API routes |
 
 </gather_context>
 
@@ -214,11 +214,11 @@ rclone listremotes
 
 # Upload video, preview GIF, and screenshots to cloud storage
 # Use --s3-no-check-bucket to avoid permission errors
-rclone copy tmp/videos/ r2:kieran-claude/pr-videos/pr-[number]/ --s3-no-check-bucket --progress
-rclone copy tmp/screenshots/ r2:kieran-claude/pr-videos/pr-[number]/screenshots/ --s3-no-check-bucket --progress
+rclone copy tmp/videos/ r2:sglyon-claude/pr-videos/pr-[number]/ --s3-no-check-bucket --progress
+rclone copy tmp/screenshots/ r2:sglyon-claude/pr-videos/pr-[number]/screenshots/ --s3-no-check-bucket --progress
 
 # List uploaded files
-rclone ls r2:kieran-claude/pr-videos/pr-[number]/
+rclone ls r2:sglyon-claude/pr-videos/pr-[number]/
 ```
 
 Public URLs (R2 with public access):

@@ -45,7 +45,7 @@ First, read and parse the plan to identify each major section that can be enhanc
 - [ ] Code examples and file references
 - [ ] Acceptance criteria
 - [ ] Any UI/UX components mentioned
-- [ ] Technologies/frameworks mentioned (Rails, React, Python, TypeScript, etc.)
+- [ ] Technologies/frameworks mentioned (React, Next.js, FastAPI, Python, TypeScript, Go, etc.)
 - [ ] Domain areas (data models, APIs, UI, security, performance, etc.)
 
 **Create a section manifest:**
@@ -131,8 +131,6 @@ The skill tells you what to do - follow it. Execute the skill completely."
 
 **Example spawns:**
 ```
-Task general-purpose: "Use the dhh-rails-style skill at ~/.claude/plugins/.../dhh-rails-style. Read SKILL.md and apply it to: [Rails sections of plan]"
-
 Task general-purpose: "Use the frontend-design skill at ~/.claude/plugins/.../frontend-design. Read SKILL.md and apply it to: [UI sections of plan]"
 
 Task general-purpose: "Use the agent-native-architecture skill at ~/.claude/plugins/.../agent-native-architecture. Read SKILL.md and apply it to: [agent/tool sections of plan]"
@@ -187,7 +185,7 @@ Each learning file has YAML frontmatter with metadata. Read the first ~20 lines 
 ---
 title: "N+1 Query Fix for Briefs"
 category: performance-issues
-tags: [activerecord, n-plus-one, includes, eager-loading]
+tags: [sqlalchemy, n-plus-one, eager-loading, drizzle]
 module: Briefs
 symptom: "Slow page load, multiple queries in logs"
 root_cause: "Missing includes on association"
@@ -211,7 +209,7 @@ Compare each learning's frontmatter against the plan:
 
 **SKIP learnings that are clearly not applicable:**
 - Plan is frontend-only → skip `database-migrations/` learnings
-- Plan is Python → skip `rails-specific/` learnings
+- Plan is Python → skip TypeScript-specific learnings (and vice versa)
 - Plan has no auth → skip `authentication-issues/` learnings
 
 **SPAWN sub-agents for learnings that MIGHT apply:**
@@ -248,16 +246,16 @@ If NOT relevant after deeper analysis:
 
 **Example filtering:**
 ```
-# Found 15 learning files, plan is about "Rails API caching"
+# Found 15 learning files, plan is about "API caching"
 
 # SPAWN (likely relevant):
-docs/solutions/performance-issues/n-plus-one-queries.md      # tags: [activerecord] ✓
+docs/solutions/performance-issues/n-plus-one-queries.md      # tags: [sqlalchemy, drizzle] ✓
 docs/solutions/performance-issues/redis-cache-stampede.md    # tags: [caching, redis] ✓
 docs/solutions/configuration-fixes/redis-connection-pool.md  # tags: [redis] ✓
 
 # SKIP (clearly not applicable):
-docs/solutions/deployment-issues/heroku-memory-quota.md      # not about caching
-docs/solutions/frontend-issues/stimulus-race-condition.md    # plan is API, not frontend
+docs/solutions/deployment-issues/memory-quota.md             # not about caching
+docs/solutions/frontend-issues/react-race-condition.md       # plan is API, not frontend
 docs/solutions/authentication-issues/jwt-expiry.md           # plan has no auth
 ```
 

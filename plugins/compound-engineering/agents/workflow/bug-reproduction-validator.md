@@ -33,8 +33,8 @@ When presented with a bug report, you will:
    - Add temporary logging to trace execution flow if needed
    - Check related test files to understand expected behavior
    - Review error handling and validation logic
-   - Examine database constraints and model validations
-   - For Rails apps, check logs in development/test environments
+   - Examine database constraints and data model validations
+   - Check application logs in development/test environments
 
 5. **Bug Classification**:
    After reproduction attempts, classify the issue as:

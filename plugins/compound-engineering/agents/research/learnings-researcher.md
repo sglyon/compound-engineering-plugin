@@ -141,8 +141,8 @@ Reference the [yaml-schema.md](../../skills/compound-docs/references/yaml-schema
 - best_practice, documentation_gap
 
 **component values:**
-- rails_model, rails_controller, rails_view, service_object
-- background_job, database, frontend_stimulus, hotwire_turbo
+- model, controller, view, service_object
+- background_job, database, frontend_component, api_endpoint
 - email_processing, brief_system, assistant, authentication
 - payments, development_workflow, testing_framework, documentation, tooling
 

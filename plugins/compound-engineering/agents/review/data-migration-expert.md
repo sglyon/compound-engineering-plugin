@@ -49,12 +49,12 @@ For every data migration or backfill, you must:
 
 - [ ] Is the code path behind a feature flag or environment variable?
 - [ ] If we need to revert, how do we restore the data? Is there a snapshot/backfill procedure?
-- [ ] Are manual scripts written as idempotent rake tasks with SELECT verification?
+- [ ] Are manual scripts written as idempotent migration scripts with SELECT verification?
 
 ### 6. Structural Refactors & Code Search
 
-- [ ] Search for every reference to removed columns/tables/associations
-- [ ] Check background jobs, admin pages, rake tasks, and views for deleted associations
+- [ ] Search for every reference to removed columns/tables/models
+- [ ] Check background jobs, admin interfaces, migration scripts, and views for deleted references
 - [ ] Do any serializers, APIs, or analytics jobs expect old columns?
 - [ ] Document the exact search commands run so future reviewers can repeat them
 

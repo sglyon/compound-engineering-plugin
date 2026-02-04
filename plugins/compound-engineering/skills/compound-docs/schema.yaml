@@ -19,13 +19,13 @@ required_fields:
   problem_type:
     type: enum
     values:
-      - build_error          # Rails, bundle, compilation errors
+      - build_error          # Compilation, bundling, dependency errors
       - test_failure         # Test failures, flaky tests
       - runtime_error        # Exceptions, crashes during execution
       - performance_issue    # Slow queries, memory issues, N+1 queries
       - database_issue       # Migration, query, schema problems
       - security_issue       # Authentication, authorization, XSS, SQL injection
-      - ui_bug               # Frontend, Stimulus, Turbo issues
+      - ui_bug               # Frontend component issues
       - integration_issue    # External service, API integration problems
       - logic_error          # Business logic bugs
       - developer_experience # DX issues: workflow, tooling, seed data, dev setup
@@ -37,24 +37,24 @@ required_fields:
   component:
     type: enum
     values:
-      - rails_model          # ActiveRecord models
-      - rails_controller     # ActionController
-      - rails_view           # ERB templates, ViewComponent
+      - model                # Data models (SQLAlchemy, Pydantic, Drizzle)
+      - controller           # Request handlers (FastAPI routes, Express)
+      - view                 # Templates, React components
       - service_object       # Custom service classes
-      - background_job       # Sidekiq, Active Job
-      - database             # PostgreSQL, migrations, schema
-      - frontend_stimulus    # Stimulus JS controllers
-      - hotwire_turbo        # Turbo Streams, Turbo Drive
+      - background_job       # Background workers, queues
+      - database             # PostgreSQL, SQLite, migrations, schema
+      - frontend_component   # React/Vue components, frontend logic
+      - api_endpoint         # REST/GraphQL endpoints
       - email_processing     # Email handling, mailers
       - brief_system         # Brief generation, summarization
       - assistant            # AI assistant, prompts
-      - authentication       # Devise, user auth
+      - authentication       # User auth, session management
       - payments             # Stripe, billing
       - development_workflow # Dev process, seed data, tooling
-      - testing_framework    # Test setup, fixtures, VCR
+      - testing_framework    # Test setup, fixtures, mocks
       - documentation        # README, guides, inline docs
       - tooling              # Scripts, generators, CLI tools
-    description: "CORA component involved"
+    description: "Application component involved"
 
   symptoms:
     type: array[string]
@@ -69,10 +69,10 @@ required_fields:
   root_cause:
     type: enum
     values:
-      - missing_association  # Incorrect Rails associations
+      - missing_association  # Incorrect ORM associations/relations
       - missing_include      # Missing eager loading (N+1)
       - missing_index        # Database performance issue
-      - wrong_api            # Using deprecated/incorrect Rails API
+      - wrong_api            # Using deprecated/incorrect framework API
       - scope_issue          # Incorrect query scope or filtering
       - thread_violation     # Real-time unsafe operation
       - async_timing         # Async/background job timing
@@ -100,7 +100,7 @@ required_fields:
       - workflow_improvement # Improved development workflow or process
       - documentation_update # Added or updated documentation
       - tooling_addition     # Added helper script or automation
-      - seed_data_update     # Updated db/seeds.rb or fixtures
+      - seed_data_update     # Updated seed data or fixtures
     description: "Type of fix applied"
 
   severity:
@@ -113,10 +113,10 @@ required_fields:
     description: "Impact severity"
 
 optional_fields:
-  rails_version:
+  framework_version:
     type: string
     pattern: '^\d+\.\d+\.\d+$'
-    description: "Rails version where this was encountered (e.g., '7.1.0')"
+    description: "Framework version where this was encountered (e.g., '0.115.0' for FastAPI)"
 
   related_components:
     type: array[string]
@@ -133,7 +133,7 @@ optional_fields:
       - "turbo-stream"
 
 validation_rules:
-  - "module must be a valid CORA module name"
+  - "module must be a valid application module name"
   - "date must be in YYYY-MM-DD format"
   - "problem_type must match one of the enum values"
   - "component must match one of the enum values"
@@ -148,12 +148,12 @@ validation_rules:
 # module: Email Processing
 # date: 2025-11-12
 # problem_type: performance_issue
-# component: rails_model
+# component: model
 # symptoms:
 #   - N+1 query when loading email threads
 #   - Brief generation taking >5 seconds
 # root_cause: missing_include
-# rails_version: 7.1.2
+# framework_version: 0.115.0
 # resolution_type: code_fix
 # severity: high
 # tags: [n-plus-one, eager-loading, performance]
@@ -167,9 +167,9 @@ validation_rules:
 # component: development_workflow
 # symptoms:
 #   - No example data for new feature in development
-#   - Rails db:seed doesn't demonstrate new capabilities
+#   - Seed scripts don't demonstrate new capabilities
 # root_cause: incomplete_setup
-# rails_version: 7.1.2
+# framework_version: 0.115.0
 # resolution_type: seed_data_update
 # severity: low
 # tags: [seed-data, dx, workflow]

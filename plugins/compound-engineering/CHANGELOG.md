@@ -5,6 +5,42 @@ All notable changes to the compound-engineering plugin will be documented in thi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.0.0] - 2026-02-04
+
+### Removed
+
+- **`dhh-rails-reviewer` agent** - Ruby/Rails-specific reviewer
+- **`kieran-rails-reviewer` agent** - Ruby/Rails-specific reviewer
+- **`ankane-readme-writer` agent** - Ruby gem README writer
+- **`lint` agent** - Ruby/ERB linting agent
+- **`dhh-rails-style` skill** - Rails style guide and references
+- **`dspy-ruby` skill** - Ruby LLM framework patterns
+- **`andrew-kane-gem-writer` skill** - Ruby gem writing patterns
+
+### Changed
+
+- **Renamed `kieran-python-reviewer` → `sglyon-python-reviewer`** - Python code reviewer
+- **Renamed `kieran-typescript-reviewer` → `sglyon-typescript-reviewer`** - TypeScript code reviewer
+- **Updated all commands** - Removed Rails/Ruby references, replaced with Python/Go/TypeScript equivalents
+  - `/workflows:review` - Updated parallel agents list, migration file patterns, project type detection
+  - `/workflows:work` - Updated test commands, reviewer agent references
+  - `/workflows:compound` - Updated specialized agent references
+  - `/workflows:plan` - Replaced Ruby code examples with TypeScript
+  - `/plan_review` - Uses sglyon-python-reviewer and sglyon-typescript-reviewer
+  - `/generate_command` - Polyglot test/lint examples
+  - `/test-browser` - Updated file-to-route mappings for Next.js, FastAPI, Go
+  - `/feature-video` - Updated server and route mapping examples
+  - `/reproduce-bug` - Generic investigation approach instead of Rails-specific agents
+  - `/deepen-plan` - Updated technology references and example tags
+  - `/triage` - Updated example file paths
+- **Removed `rails` and `ruby` keywords** from plugin.json, added `go`
+
+### Summary
+
+- 24 agents, 24 commands, 12 skills, 1 MCP server
+
+---
+
 ## [2.29.0] - 2026-02-04
 
 ### Changed

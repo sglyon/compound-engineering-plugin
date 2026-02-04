@@ -66,8 +66,8 @@ This command launches multiple specialized subagents IN PARALLEL to maximize eff
    - **performance_issue** → `performance-oracle`
    - **security_issue** → `security-sentinel`
    - **database_issue** → `data-integrity-guardian`
-   - **test_failure** → `cora-test-reviewer`
-   - Any code-heavy issue → `kieran-rails-reviewer` + `code-simplicity-reviewer`
+   - **test_failure** → `code-simplicity-reviewer`
+   - Any code-heavy issue → `sglyon-typescript-reviewer` + `code-simplicity-reviewer`
 
 ## What It Captures
 
@@ -125,7 +125,7 @@ Primary Subagent Results:
 
 Specialized Agent Reviews (Auto-Triggered):
   ✓ performance-oracle: Validated query optimization approach
-  ✓ kieran-rails-reviewer: Code examples meet Rails standards
+  ✓ sglyon-typescript-reviewer: Code examples meet TypeScript standards
   ✓ code-simplicity-reviewer: Solution is appropriately minimal
   ✓ every-style-editor: Documentation style verified
 
@@ -177,20 +177,21 @@ Build → Test → Find Issue → Research → Improve → Document → Validate
 Based on problem type, these agents can enhance documentation:
 
 ### Code Quality & Review
-- **kieran-rails-reviewer**: Reviews code examples for Rails best practices
+- **sglyon-typescript-reviewer**: Reviews code examples for TypeScript best practices
+- **sglyon-python-reviewer**: Reviews code examples for Python best practices
 - **code-simplicity-reviewer**: Ensures solution code is minimal and clear
 - **pattern-recognition-specialist**: Identifies anti-patterns or repeating issues
 
 ### Specific Domain Experts
 - **performance-oracle**: Analyzes performance_issue category solutions
 - **security-sentinel**: Reviews security_issue solutions for vulnerabilities
-- **cora-test-reviewer**: Creates test cases for prevention strategies
+- **code-simplicity-reviewer**: Creates test cases for prevention strategies
 - **data-integrity-guardian**: Reviews database_issue migrations and queries
 
 ### Enhancement & Documentation
 - **best-practices-researcher**: Enriches solution with industry best practices
 - **every-style-editor**: Reviews documentation style and clarity
-- **framework-docs-researcher**: Links to Rails/gem documentation references
+- **framework-docs-researcher**: Links to framework documentation references
 
 ### When to Invoke
 - **Auto-triggered** (optional): Agents can run post-documentation for enhancement

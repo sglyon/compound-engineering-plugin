@@ -70,7 +70,7 @@ Extract from conversation history:
 
 **Environment details:**
 
-- Rails version
+- Framework version (FastAPI, React, etc.)
 - Stage (0-6 or post-implementation)
 - OS version
 - File/line references
@@ -290,7 +290,7 @@ What's next?
 User selects this when:
 - System made this mistake multiple times across different modules
 - Solution is non-obvious but must be followed every time
-- Foundational requirement (Rails, Rails API, threading, etc.)
+- Foundational requirement (framework APIs, threading, etc.)
 
 Action:
 1. Extract pattern from the documentation

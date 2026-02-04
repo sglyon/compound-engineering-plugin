@@ -121,7 +121,7 @@ This command takes a work document (plan, specification, or todo file) and execu
    **Commit workflow:**
    ```bash
    # 1. Verify tests pass (use project's test command)
-   # Examples: bin/rails test, npm test, pytest, go test, etc.
+   # Examples: bun test, npm test, pytest, go test, etc.
 
    # 2. Stage only files related to this logical unit (not `git add .`)
    git add <files related to this logical unit>
@@ -177,10 +177,10 @@ This command takes a work document (plan, specification, or todo file) and execu
 
    ```bash
    # Run full test suite (use project's test command)
-   # Examples: bin/rails test, npm test, pytest, go test, etc.
+   # Examples: bun test, npm test, pytest, go test, etc.
 
    # Run linting (per CLAUDE.md)
-   # Use linting-agent before pushing to origin
+   # Use project linter before pushing to origin
    ```
 
 2. **Consider Reviewer Agents** (Optional)
@@ -188,16 +188,16 @@ This command takes a work document (plan, specification, or todo file) and execu
    Use for complex, risky, or large changes:
 
    - **code-simplicity-reviewer**: Check for unnecessary complexity
-   - **kieran-rails-reviewer**: Verify Rails conventions (Rails projects)
+   - **sglyon-python-reviewer**: Verify Python conventions (Python projects)
+   - **sglyon-typescript-reviewer**: Verify TypeScript conventions (TypeScript projects)
    - **performance-oracle**: Check for performance issues
    - **security-sentinel**: Scan for security vulnerabilities
-   - **cora-test-reviewer**: Review test quality (Rails projects with comprehensive test coverage)
 
    Run reviewers in parallel with Task tool:
 
    ```
    Task(code-simplicity-reviewer): "Review changes for simplicity"
-   Task(kieran-rails-reviewer): "Check Rails conventions"
+   Task(sglyon-typescript-reviewer): "Check TypeScript conventions"
    ```
 
    Present findings to user and address critical issues.
@@ -238,7 +238,7 @@ This command takes a work document (plan, specification, or todo file) and execu
 
    **Step 1: Start dev server** (if not running)
    ```bash
-   bin/dev  # Run in background
+   npm run dev  # or bun dev, python manage.py runserver, etc.
    ```
 
    **Step 2: Capture screenshots with agent-browser CLI**
@@ -342,7 +342,7 @@ Before creating PR, verify:
 - [ ] All clarifying questions asked and answered
 - [ ] All beads issues closed (`bd epic status` shows 100%)
 - [ ] Tests pass (run project's test command)
-- [ ] Linting passes (use linting-agent)
+- [ ] Linting passes (use project linter)
 - [ ] Code follows existing patterns
 - [ ] Figma designs match implementation (if applicable)
 - [ ] Before/after screenshots captured and uploaded (for UI changes)
