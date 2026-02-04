@@ -25,7 +25,7 @@ Start from a **seed** (minimal core: `/plan`, `/work`, `/review`, `/compound`). 
 | Commands | `/plan`, `/work`, `/review`, `/compound` |
 | Review Agents | security, performance, simplicity, architecture, patterns |
 | Research Agents | best-practices, framework-docs, git-history, repo-analyst |
-| Skills | compound-docs, file-todos, git-worktree |
+| Skills | compound-docs, beads, git-worktree |
 | MCP Servers | playwright, context7 |
 
 ### The Growth Loop

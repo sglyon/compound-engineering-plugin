@@ -126,7 +126,7 @@ Core workflow commands use `workflows:` prefix to avoid collisions with built-in
 | Skill | Description |
 |-------|-------------|
 | `every-style-editor` | Review copy for Every's style guide compliance |
-| `file-todos` | File-based todo tracking system |
+| `beads` | Git-backed issue tracking with Beads (`bd`) CLI |
 | `git-worktree` | Manage Git worktrees for parallel development |
 
 ### File Transfer

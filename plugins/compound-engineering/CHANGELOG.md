@@ -5,6 +5,32 @@ All notable changes to the compound-engineering plugin will be documented in thi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.29.0] - 2026-02-04
+
+### Changed
+
+- **Replaced `file-todos` skill with `beads` skill** - Migrated from file-based markdown todo tracking (`todos/` directory) to Beads (`bd`), a distributed git-backed graph issue tracker designed for AI coding agents
+  - Issues tracked in `.beads/issues.jsonl` (git-versioned) instead of individual markdown files
+  - Hash-based IDs (`bd-a1b2`) prevent merge conflicts across branches/agents
+  - Built-in dependency graph with blocking relationships replaces manual YAML frontmatter deps
+  - `bd ready` replaces `ls todos/*-ready-*.md` for finding unblocked work
+  - `bd create/update/close` replaces file rename workflows for status transitions
+
+- **Updated `/triage` command** - Now creates/manages Beads issues instead of markdown files
+- **Updated `/resolve_todo_parallel` command** - Uses `bd ready` to find work, `bd close` to complete
+- **Updated `/resolve_parallel` command** - Uses Beads for tracking instead of TodoWrite
+- **Updated `/resolve_pr_parallel` command** - Uses Beads for tracking instead of TodoWrite
+- **Updated `/workflows:work` command** - Uses Beads epics and issues instead of TodoWrite for task tracking
+- **Updated `/workflows:review` command** - Creates Beads issues for findings instead of file-todos
+- **Updated `/generate_command` command** - References Beads instead of TodoWrite
+- **Updated `/test-browser` and `/xcode-test` commands** - "Create todo" option now uses `bd create`
+
+### Summary
+
+- 28 agents, 24 commands, 15 skills, 1 MCP server
+
+---
+
 ## [2.28.0] - 2026-01-21
 
 ### Added

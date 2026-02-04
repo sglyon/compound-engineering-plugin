@@ -1,13 +1,13 @@
 ---
 name: triage
-description: Triage and categorize findings for the CLI todo system
+description: Triage and categorize findings using Beads issue tracker
 argument-hint: "[findings list or source type]"
 ---
 
 - First set the /model to Haiku
-- Then read all pending todos in the todos/ directory
+- Then list all open issues: `bd list --status open`
 
-Present all findings, decisions, or issues here one by one for triage. The goal is to go through each item and decide whether to add it to the CLI todo system.
+Present all findings, decisions, or issues here one by one for triage. The goal is to go through each item and decide whether to approve it for work or reject it.
 
 **IMPORTANT: DO NOT CODE ANYTHING DURING TRIAGE!**
 
@@ -28,7 +28,7 @@ For each finding, present in this format:
 ---
 Issue #X: [Brief Title]
 
-Severity: 🔴 P1 (CRITICAL) / 🟡 P2 (IMPORTANT) / 🔵 P3 (NICE-TO-HAVE)
+Severity: P1 (CRITICAL) / P2 (IMPORTANT) / P3 (NICE-TO-HAVE)
 
 Category: [Security/Performance/Architecture/Bug/Feature/etc.]
 
@@ -46,109 +46,52 @@ Proposed Solution:
 Estimated Effort: [Small (< 2 hours) / Medium (2-8 hours) / Large (> 8 hours)]
 
 ---
-Do you want to add this to the todo list?
-1. yes - create todo file
+Do you want to approve this issue?
+1. yes - approve for work
 2. next - skip this item
-3. custom - modify before creating
+3. custom - modify before approving
 ```
 
 ### Step 2: Handle User Decision
 
 **When user says "yes":**
 
-1. **Update existing todo file** (if it exists) or **Create new filename:**
+1. **If the issue already exists as a bead**, update it:
 
-   If todo already exists (from code review):
-
-   - Rename file from `{id}-pending-{priority}-{desc}.md` → `{id}-ready-{priority}-{desc}.md`
-   - Update YAML frontmatter: `status: pending` → `status: ready`
-   - Keep issue_id, priority, and description unchanged
-
-   If creating new todo:
-
+   ```bash
+   bd label add <id> approved
+   bd update <id> --append-notes "Approved during triage session"
    ```
-   {next_id}-ready-{priority}-{brief-description}.md
-   ```
+
+2. **If creating a new issue**, create it with `bd`:
 
    Priority mapping:
+   - P1 (CRITICAL) -> `-p 0`
+   - P2 (IMPORTANT) -> `-p 1`
+   - P3 (NICE-TO-HAVE) -> `-p 2`
 
-   - 🔴 P1 (CRITICAL) → `p1`
-   - 🟡 P2 (IMPORTANT) → `p2`
-   - 🔵 P3 (NICE-TO-HAVE) → `p3`
-
-   Example: `042-ready-p1-transaction-boundaries.md`
-
-2. **Update YAML frontmatter:**
-
-   ```yaml
-   ---
-   status: ready # IMPORTANT: Change from "pending" to "ready"
-   priority: p1 # or p2, p3 based on severity
-   issue_id: "042"
-   tags: [category, relevant-tags]
-   dependencies: []
-   ---
+   ```bash
+   bd create "Issue Title" \
+     -t task \
+     -p 0 \
+     -d "Problem statement and description" \
+     -l code-review,security,approved
    ```
 
-3. **Populate or update the file:**
+3. **Add detailed context as a comment:**
 
-   ```yaml
-   # [Issue Title]
-
-   ## Problem Statement
-   [Description from finding]
-
-   ## Findings
-   - [Key discoveries]
-   - Location: [file_path:line_number]
-   - [Scenario details]
-
-   ## Proposed Solutions
-
-   ### Option 1: [Primary solution]
-   - **Pros**: [Benefits]
-   - **Cons**: [Drawbacks if any]
-   - **Effort**: [Small/Medium/Large]
-   - **Risk**: [Low/Medium/High]
-
-   ## Recommended Action
-   [Filled during triage - specific action plan]
-
-   ## Technical Details
-   - **Affected Files**: [List files]
-   - **Related Components**: [Components affected]
-   - **Database Changes**: [Yes/No - describe if yes]
-
-   ## Resources
-   - Original finding: [Source of this issue]
-   - Related issues: [If any]
-
-   ## Acceptance Criteria
-   - [ ] [Specific success criteria]
-   - [ ] Tests pass
-   - [ ] Code reviewed
-
-   ## Work Log
-
-   ### {date} - Approved for Work
-   **By:** Claude Triage System
-   **Actions:**
-   - Issue approved during triage session
-   - Status changed from pending → ready
-   - Ready to be picked up and worked on
-
-   **Learnings:**
-   - [Context and insights]
-
-   ## Notes
-   Source: Triage session on {date}
+   ```bash
+   bd comments add <id> "Findings: [key discoveries]. Proposed solution: [approach]. Effort: [estimate]"
    ```
 
-4. **Confirm approval:** "✅ Approved: `{new_filename}` (Issue #{issue_id}) - Status: **ready** → Ready to work on"
+4. **Confirm approval:** "Approved: `<id>` - [Title] (Priority: P1) - Ready to work on"
 
 **When user says "next":**
 
-- **Delete the todo file** - Remove it from todos/ directory since it's not relevant
+- If the issue exists as a bead, close it:
+  ```bash
+  bd close <id> --reason "Rejected during triage - not relevant"
+  ```
 - Skip to the next item
 - Track skipped items for summary
 
@@ -162,7 +105,6 @@ Do you want to add this to the todo list?
 ### Step 3: Continue Until All Processed
 
 - Process all items one by one
-- Track using TodoWrite for visibility
 - Don't wait for approval between items - keep moving
 
 ### Step 4: Final Summary
@@ -172,31 +114,31 @@ After all items processed:
 ````markdown
 ## Triage Complete
 
-**Total Items:** [X] **Todos Approved (ready):** [Y] **Skipped:** [Z]
+**Total Items:** [X] **Approved:** [Y] **Skipped:** [Z]
 
-### Approved Todos (Ready for Work):
+### Approved Issues (Ready for Work):
 
-- `042-ready-p1-transaction-boundaries.md` - Transaction boundary issue
-- `043-ready-p2-cache-optimization.md` - Cache performance improvement ...
+- `bd-a1b2` (P1) - Transaction boundary issue
+- `bd-c3d4` (P2) - Cache performance improvement ...
 
-### Skipped Items (Deleted):
+### Skipped Items:
 
-- Item #5: [reason] - Removed from todos/
-- Item #12: [reason] - Removed from todos/
+- Item #5: [reason] - Closed as rejected
+- Item #12: [reason] - Closed as rejected
 
 ### Summary of Changes Made:
 
-During triage, the following status updates occurred:
+During triage, the following updates occurred:
 
-- **Pending → Ready:** Filenames and frontmatter updated to reflect approved status
-- **Deleted:** Todo files for skipped findings removed from todos/ directory
-- Each approved file now has `status: ready` in YAML frontmatter
+- **Approved:** Issues labeled `approved` and ready for work
+- **Rejected:** Issues closed with rejection reason
 
 ### Next Steps:
 
-1. View approved todos ready for work:
+1. View approved issues ready for work:
    ```bash
-   ls todos/*-ready-*.md
+   bd ready
+   bd list --label approved
    ```
 ````
 
@@ -208,9 +150,11 @@ During triage, the following status updates occurred:
 
 3. Or pick individual items to work on
 
-4. As you work, update todo status:
-   - Ready → In Progress (in your local context as you work)
-   - In Progress → Complete (rename file: ready → complete, update frontmatter)
+4. As you work, update issue status:
+   ```bash
+   bd update <id> --status in_progress --claim
+   bd close <id> --reason "Fixed in commit abc123"
+   ```
 
 ```
 
@@ -222,7 +166,7 @@ During triage, the following status updates occurred:
 
 Issue #5: Missing Transaction Boundaries for Multi-Step Operations
 
-Severity: 🔴 P1 (CRITICAL)
+Severity: P1 (CRITICAL)
 
 Category: Data Integrity / Security
 
@@ -252,11 +196,11 @@ Estimated Effort: Small (30 minutes)
 
 ---
 
-Do you want to add this to the todo list?
+Do you want to approve this issue?
 
-1. yes - create todo file
+1. yes - approve for work
 2. next - skip this item
-3. custom - modify before creating
+3. custom - modify before approving
 
 ```
 
@@ -265,38 +209,33 @@ Do you want to add this to the todo list?
 ### Status Transitions During Triage
 
 **When "yes" is selected:**
-1. Rename file: `{id}-pending-{priority}-{desc}.md` → `{id}-ready-{priority}-{desc}.md`
-2. Update YAML frontmatter: `status: pending` → `status: ready`
-3. Update Work Log with triage approval entry
-4. Confirm: "✅ Approved: `{filename}` (Issue #{issue_id}) - Status: **ready**"
+1. Create issue with `bd create` (or label existing with `approved`)
+2. Add detailed context as comment with `bd comments add`
+3. Confirm: "Approved: `<id>` - [Title] (Priority: P1)"
 
 **When "next" is selected:**
-1. Delete the todo file from todos/ directory
+1. Close the issue with rejection reason: `bd close <id> --reason "Rejected during triage"`
 2. Skip to next item
-3. No file remains in the system
 
 ### Progress Tracking
 
-Every time you present a todo as a header, include:
+Every time you present an item as a header, include:
 - **Progress:** X/Y completed (e.g., "3/10 completed")
-- **Estimated time remaining:** Based on how quickly you're progressing
-- **Pacing:** Monitor time per finding and adjust estimate accordingly
 
 Example:
 ```
 
-Progress: 3/10 completed | Estimated time: ~2 minutes remaining
+Progress: 3/10 completed
 
 ```
 
 ### Do Not Code During Triage
 
-- ✅ Present findings
-- ✅ Make yes/next/custom decisions
-- ✅ Update todo files (rename, frontmatter, work log)
-- ❌ Do NOT implement fixes or write code
-- ❌ Do NOT add detailed implementation details
-- ❌ That's for /resolve_todo_parallel phase
+- Present findings
+- Make yes/next/custom decisions
+- Create/update beads issues
+- Do NOT implement fixes or write code
+- That's for /resolve_todo_parallel phase
 ```
 
 When done give these options
@@ -304,7 +243,7 @@ When done give these options
 ```markdown
 What would you like to do next?
 
-1. run /resolve_todo_parallel to resolve the todos
-2. commit the todos
+1. run /resolve_todo_parallel to resolve the issues
+2. sync beads: `bd sync`
 3. nothing, go chill
 ```

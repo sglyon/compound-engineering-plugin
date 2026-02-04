@@ -233,7 +233,7 @@ When a test fails:
 
    How to proceed?
    1. Fix now - I'll help debug and fix
-   2. Create todo - Add to todos/ for later
+   2. Create issue - Track with `bd create` for later
    3. Skip - Continue testing other pages
    ```
 

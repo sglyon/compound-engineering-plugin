@@ -72,9 +72,14 @@ This command takes a work document (plan, specification, or todo file) and execu
    - You want to keep the default branch clean while experimenting
    - You plan to switch between branches frequently
 
-3. **Create Todo List**
-   - Use TodoWrite to break plan into actionable tasks
-   - Include dependencies between tasks
+3. **Create Issue Tracker**
+   - Use Beads (`bd`) to break plan into actionable issues
+   - Create an epic for the overall plan, then child issues for each task:
+     ```bash
+     bd create "Epic: <plan title>" -t epic -p 1
+     bd create "Task description" -t task --parent <epic-id> -p 1
+     ```
+   - Add dependencies between tasks: `bd dep add <blocked> <blocker>`
    - Prioritize based on what needs to be done first
    - Include testing and quality check tasks
    - Keep tasks specific and completable
@@ -87,13 +92,13 @@ This command takes a work document (plan, specification, or todo file) and execu
 
    ```
    while (tasks remain):
-     - Mark task as in_progress in TodoWrite
+     - Claim task: bd update <id> --status in_progress --claim
      - Read any referenced files from the plan
      - Look for similar patterns in codebase
      - Implement following existing conventions
      - Write tests for new functionality
      - Run tests after changes
-     - Mark task as completed in TodoWrite
+     - Close task: bd close <id> --reason "Completed"
      - Mark off the corresponding checkbox in the plan file ([ ] → [x])
      - Evaluate for incremental commit (see below)
    ```
@@ -154,9 +159,14 @@ This command takes a work document (plan, specification, or todo file) and execu
    - Repeat until implementation matches design
 
 6. **Track Progress**
-   - Keep TodoWrite updated as you complete tasks
+   - Update beads as you complete tasks:
+     ```bash
+     bd close <id> --reason "Done"          # Mark complete
+     bd comments add <id> "Progress note"   # Add context
+     bd create "New task" --parent <epic>    # If scope expands
+     bd epic status                          # Check overall progress
+     ```
    - Note any blockers or unexpected discoveries
-   - Create new tasks if scope expands
    - Keep user informed of major milestones
 
 ### Phase 3: Quality Check
@@ -193,7 +203,7 @@ This command takes a work document (plan, specification, or todo file) and execu
    Present findings to user and address critical issues.
 
 3. **Final Validation**
-   - All TodoWrite tasks marked completed
+   - All beads issues closed (`bd epic status` shows 100%)
    - All tests pass
    - Linting passes
    - Code follows existing patterns
@@ -330,7 +340,7 @@ This command takes a work document (plan, specification, or todo file) and execu
 Before creating PR, verify:
 
 - [ ] All clarifying questions asked and answered
-- [ ] All TodoWrite tasks marked completed
+- [ ] All beads issues closed (`bd epic status` shows 100%)
 - [ ] Tests pass (run project's test command)
 - [ ] Linting passes (use linting-agent)
 - [ ] Code follows existing patterns
@@ -358,6 +368,6 @@ For most features: tests + linting + following patterns is sufficient.
 - **Skipping clarifying questions** - Ask now, not after building wrong thing
 - **Ignoring plan references** - The plan has links for a reason
 - **Testing at the end** - Test continuously or suffer later
-- **Forgetting TodoWrite** - Track progress or lose track of what's done
+- **Forgetting Beads** - Track progress with `bd` or lose track of what's done
 - **80% done syndrome** - Finish the feature, don't move on early
 - **Over-reviewing simple changes** - Save reviewer agents for complex work

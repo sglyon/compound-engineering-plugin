@@ -34,8 +34,6 @@ const TOOL_MAP: Record<string, string> = {
   patch: "patch",
   task: "task",
   question: "question",
-  todowrite: "todowrite",
-  todoread: "todoread",
 }
 
 type HookEventMapping = {
@@ -286,8 +284,6 @@ function applyPermissions(
     "patch",
     "task",
     "question",
-    "todowrite",
-    "todoread",
   ]
   let enabled = new Set<string>()
   const patterns: Record<string, Set<string>> = {}
