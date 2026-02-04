@@ -275,5 +275,5 @@ Review and enhance the `/docs/index.html` landing page using LaunchKit elements 
 
 - LaunchKit Template: https://launchkit.evilmartians.io/
 - Pragmatic Writing Skill: `~/.claude/skills/pragmatic-writing-skill/SKILL.md`
-- Current Landing Page: `/Users/kieranklaassen/sglyon-marketplace/docs/index.html`
-- Style CSS: `/Users/kieranklaassen/sglyon-marketplace/docs/css/style.css`
+- Current Landing Page: `/Volumes/work/src/compound-engineering-plugin/docs/index.html`
+- Style CSS: `/Volumes/work/src/compound-engineering-plugin/docs/css/style.css`

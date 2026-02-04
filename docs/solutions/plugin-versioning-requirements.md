@@ -72,6 +72,6 @@ This documentation serves as a reminder. When Claude Code works on this plugin, 
 
 ## Related Files
 
-- `/Users/kieranklaassen/sglyon-marketplace/plugins/compound-engineering/.claude-plugin/plugin.json`
-- `/Users/kieranklaassen/sglyon-marketplace/plugins/compound-engineering/CHANGELOG.md`
-- `/Users/kieranklaassen/sglyon-marketplace/plugins/compound-engineering/README.md`
+- `/Volumes/work/src/compound-engineering-plugin/plugins/compound-engineering/.claude-plugin/plugin.json`
+- `/Volumes/work/src/compound-engineering-plugin/plugins/compound-engineering/CHANGELOG.md`
+- `/Volumes/work/src/compound-engineering-plugin/plugins/compound-engineering/README.md`
