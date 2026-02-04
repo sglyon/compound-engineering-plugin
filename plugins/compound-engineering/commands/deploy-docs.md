@@ -108,5 +108,5 @@ Provide a summary:
 - [ ] Commit any pending changes
 - [ ] Push to main branch
 - [ ] Verify GitHub Pages workflow exists
-- [ ] Check deployment at https://everyinc.github.io/every-marketplace/
+- [ ] Check deployment at https://sglyon.github.io/sglyon-marketplace/
 ```
