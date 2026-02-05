@@ -1,6 +1,6 @@
 # Compounding Engineering Plugin
 
-AI-powered development tools that get smarter with every use. Make each unit of engineering work easier than the last.
+AI-powered development tools that get smarter with every use. Make each unit of engineering work easier than the last. Supports agent teams (Claude Code 2.1.32+) for coordinated multi-agent workflows with graceful fallback to parallel subagents.
 
 ## Components
 

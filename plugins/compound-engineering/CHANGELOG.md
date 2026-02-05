@@ -5,6 +5,23 @@ All notable changes to the compound-engineering plugin will be documented in thi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.2.0] - 2026-02-05
+
+### Changed
+
+- **`/workflows:review` command** - Added agent teams as preferred parallelization strategy for code review. Reviewer teammates share findings, challenge each other, and coordinate severity ratings. Falls back to parallel Task tool calls when agent teams are unavailable.
+- **`/deepen-plan` command** - Added agent teams support for research coordination. Research teammates share discoveries, build on each other's findings, and avoid redundant research.
+- **`/agent-native-audit` command** - Added agent teams support for principle auditors. 8 teammates cross-reference findings across overlapping areas like CRUD Completeness and Action Parity.
+- **`/workflows:compound` command** - Restructured execution strategy to prefer agent teams. 6 specialist teammates coordinate to produce coherent documentation of solved problems.
+- **`/plan_review` command** - Expanded from single-line instruction to full command with agent team structure. Reviewer teammates debate and challenge each other's feedback.
+
+### Summary
+
+- 24 agents, 24 commands, 13 skills, 1 MCP server
+- Agent teams support requires `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` (experimental)
+
+---
+
 ## [3.1.0] - 2026-02-04
 
 ### Added

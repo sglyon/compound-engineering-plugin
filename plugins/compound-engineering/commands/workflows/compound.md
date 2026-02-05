@@ -21,9 +21,27 @@ Captures problem solutions while context is fresh, creating structured documenta
 /workflows:compound [brief context]    # Provide additional context hint
 ```
 
-## Execution Strategy: Parallel Subagents
+## Execution Strategy
 
-This command launches multiple specialized subagents IN PARALLEL to maximize efficiency:
+### Parallelization Strategy
+
+**Preferred: Agent Team** (requires `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`)
+
+Create an agent team with 6 specialist teammates examining the solved problem from different angles. Teammates coordinate to produce a coherent document — the Context Analyzer shares its findings so the Documentation Writer can assemble everything, and the Related Docs Finder shares cross-references that the Prevention Strategist can build on.
+
+Spawn teammates:
+- **Context Analyzer**: Extract conversation history, identify problem type/component/symptoms, return YAML frontmatter skeleton
+- **Solution Extractor**: Analyze investigation steps, identify root cause, extract working solution with code examples
+- **Related Docs Finder**: Search `docs/solutions/` for related docs, find cross-references and GitHub issues
+- **Prevention Strategist**: Develop prevention strategies, best practices, test cases
+- **Category Classifier**: Determine optimal category, validate against schema, suggest filename
+- **Documentation Writer**: Assemble complete markdown file, validate YAML frontmatter, create file
+
+The lead synthesizes all teammate outputs into the final documented solution.
+
+**Fallback: Parallel Subagents**
+
+If agent teams are not available, launch multiple specialized subagents IN PARALLEL to maximize efficiency:
 
 ### 1. **Context Analyzer** (Parallel)
    - Extracts conversation history

@@ -31,9 +31,29 @@ First, invoke the agent-native-architecture skill to understand all principles:
 
 Select option 7 (action parity) to load the full reference material.
 
-### Step 2: Launch Parallel Sub-Agents
+### Step 2: Launch Parallel Auditors
 
-Launch 8 parallel sub-agents using the Task tool with `subagent_type: Explore`, one for each principle. Each agent should:
+#### Parallelization Strategy
+
+**Preferred: Agent Team** (requires `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`)
+
+Create an agent team with 8 principle-audit teammates. The lead compiles the scored summary report. Each teammate audits one principle and messages others about cross-cutting concerns (e.g., "CRUD Completeness" and "Action Parity" share evidence about missing capabilities).
+
+Spawn teammates:
+- **Action Parity Auditor**: Enumerate user actions vs agent tools
+- **Tools as Primitives Auditor**: Classify tools as primitives vs workflows
+- **Context Injection Auditor**: Check what IS vs SHOULD be injected
+- **Shared Workspace Auditor**: Verify agents and users share data space
+- **CRUD Completeness Auditor**: Check full CRUD for every entity
+- **UI Integration Auditor**: Verify agent actions reflect in UI immediately
+- **Capability Discovery Auditor**: Check 7 discovery mechanisms
+- **Prompt-Native Features Auditor**: Classify features as prompt-defined vs code-defined
+
+Each teammate should provide a SPECIFIC SCORE like "X out of Y (percentage%)".
+
+**Fallback: Parallel Subagents**
+
+If agent teams are not available, launch 8 parallel sub-agents using the Task tool with `subagent_type: Explore`, one for each principle. Each agent should:
 
 1. Enumerate ALL instances in the codebase (user actions, tools, contexts, data stores, etc.)
 2. Check compliance against the principle

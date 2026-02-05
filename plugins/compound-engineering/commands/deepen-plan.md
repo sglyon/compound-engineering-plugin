@@ -10,7 +10,7 @@ argument-hint: "[path to plan file]"
 
 **Note: The current year is 2026.** Use this when searching for recent documentation and best practices.
 
-This command takes an existing plan (from `/workflows:plan`) and enhances each section with parallel research agents. Each major element gets its own dedicated research sub-agent to find:
+This command takes an existing plan (from `/workflows:plan`) and enhances each section with parallel research agents. Each major element gets its own dedicated research teammate to find:
 - Best practices and industry patterns
 - Performance optimizations
 - UI/UX improvements (if applicable)
@@ -18,6 +18,24 @@ This command takes an existing plan (from `/workflows:plan`) and enhances each s
 - Real-world implementation examples
 
 The result is a deeply grounded, production-ready plan with concrete implementation details.
+
+### Parallelization Strategy
+
+**Preferred: Agent Team** (requires `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`)
+
+Create an agent team to research and enhance the plan. The lead coordinates assignment while research teammates share discoveries, build on each other's findings, and avoid redundant research.
+
+Spawn teammates:
+- **Skill Agents** (1 per matched skill): Each reads and applies its assigned skill to the plan
+- **Learnings Researchers** (1 per relevant learning file): Check if documented solutions apply
+- **Section Researchers** (1 per major plan section): Research best practices and implementation details
+- **Review Agents** (all available reviewers): Review the plan for gaps and improvements
+
+Teammates should message each other when they discover overlapping findings or conflicting recommendations. The lead synthesizes all results into enhanced plan sections.
+
+**Fallback: Parallel Subagents**
+
+If agent teams are not available, use parallel Task tool calls as described in the steps below.
 
 ## Plan File
 
