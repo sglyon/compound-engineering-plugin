@@ -53,10 +53,10 @@ Ensure that the code is ready for analysis (either in worktree or on current bra
 <protected_artifacts>
 The following paths are compound-engineering pipeline artifacts and must never be flagged for deletion, removal, or gitignore by any review agent:
 
-- `docs/plans/*.md` — Plan files created by `/workflows:plan`. These are living documents that track implementation progress (checkboxes are checked off by `/workflows:work`).
-- `docs/solutions/*.md` — Solution documents created during the pipeline.
+- `docs/plans/*.md` — Plan files created by `/workflows:plan`. These are reference documents that describe design decisions, architecture, and rationale. Implementation progress is tracked in beads (`bd epic status`), not in plan checkboxes.
+- `docs/solutions/*.md` — Solution documents created by `/workflows:compound` capturing learnings.
 
-If a review agent flags any file in these directories for cleanup or removal, discard that finding during synthesis. Do not create a todo for it.
+If a review agent flags any file in these directories for cleanup or removal, discard that finding during synthesis. Do not create a beads issue for it.
 </protected_artifacts>
 
 #### Parallelization Strategy

@@ -20,6 +20,8 @@ This skill can be skipped when:
 - Work will be done immediately in one session without tracking
 - Issues already exist for this plan
 
+**After conversion, beads is the single source of truth.** The plan markdown becomes a read-only reference document for design context, rationale, and code examples. All work tracking (status, progress, assignments, dependencies) lives in beads. Do NOT track progress by checking off plan markdown checkboxes — use `bd update`, `bd close`, and `bd epic status` instead.
+
 ## Prerequisites
 
 Beads must be initialized in the project:
@@ -54,6 +56,8 @@ Read the plan file completely. Extract and catalog:
 | **Type** | From frontmatter `type:` (feat, fix, refactor) |
 | **Phases** | `#### Phase N:` sections with tasks and deliverables |
 | **Acceptance Criteria** | `- [ ]` checkbox items under Acceptance Criteria |
+| **Red Tests** | Items under "Red Tests (Write First)" — these become beads issues for writing failing tests |
+| **Review Checkpoints** | Items under "Review Checkpoints" — these become beads `chore` issues that gate phase transitions |
 | **Dependencies** | Explicit mentions of ordering ("after X", "requires Y", "blocked by Z") |
 | **Technical Risks** | Items in Risk Analysis or Dependencies sections |
 | **Non-functional Requirements** | Performance targets, security requirements, accessibility |
@@ -164,11 +168,13 @@ bd create "[Task description]" \
 |-------------|-----------|
 | New endpoint/component/feature | `feature` |
 | Database migration/schema change | `task` |
+| Red test writing (from "Red Tests" section) | `chore` |
 | Test writing | `chore` |
 | Configuration/setup | `chore` |
 | Bug fix identified in plan | `bug` |
 | Documentation | `chore` |
 | Refactoring | `task` |
+| Review checkpoint (from "Review Checkpoints" section) | `chore` |
 
 ### Phase 5: Set Up Dependencies
 
@@ -248,7 +254,9 @@ Run `bd ready --sort priority` to see unblocked work items.
 
 ## Post-Creation Options
 
-After creating all issues, present options using AskUserQuestion:
+After creating all issues, announce: "Beads is now the source of truth for this epic. The plan at `[path]` is a reference document for design context — all progress tracking happens in beads."
+
+Present options using AskUserQuestion:
 
 **Question:** "Created [N] Beads issues from plan. What would you like to do next?"
 

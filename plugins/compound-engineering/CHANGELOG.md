@@ -5,6 +5,39 @@ All notable changes to the compound-engineering plugin will be documented in thi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.3.0] - 2026-02-16
+
+### Changed
+
+- **`/workflows:plan` command** - Added red/green TDD planning, review checkpoints, compounding, and beads-first language:
+  - New Step 3.5 "TDD Strategy (Red/Green Planning)" — plans now define failing tests upfront per phase
+  - All three plan templates (MINIMAL, MORE, A LOT) include "Red Tests (Write First)" and "Review Checkpoints" sections
+  - Review checkpoints now include `/workflows:compound` for non-trivial fixes at each gate
+  - Pre-submission checklist requires red tests and review checkpoints to be defined
+  - Clarified that plans are reference documents for design context, not work trackers — beads owns progress tracking after conversion
+
+- **`/workflows:work` command** - Added red/green TDD execution, review checkpoints with compounding, and made beads the sole work tracker:
+  - New Step 1 "Write Red Tests First" — all phase tests are written and confirmed FAILING before implementation
+  - Task execution loop now follows RED → GREEN cycle and uses `bd ready` for task discovery (not plan checkboxes)
+  - Removed all "mark off checkbox in plan file" instructions — beads is the single source of truth
+  - New Step 3 "Review Checkpoints" — runs `/workflows:review` after each phase/chunk, creates beads for findings, P1s block next phase
+  - Review checkpoints trigger `/workflows:compound` for non-trivial fixes (>15 min investigation, surprising root cause, repeatable mistake, or new pattern)
+  - Key Principles: "The Plan is Your Guide" → "The Plan is Your Reference, Beads is Your Tracker"
+  - Common Pitfalls: added "Tracking progress in markdown" warning
+
+- **`/workflows:review` command** - Updated protected artifacts description: plan files are reference documents, not progress trackers
+
+- **`plan-to-beads` skill** - Reinforced beads-as-source-of-truth after conversion:
+  - Added explicit note that plan becomes read-only reference after beads conversion
+  - Now extracts "Red Tests" and "Review Checkpoints" sections as beads issues
+  - Post-creation announcement states beads owns all progress tracking
+
+### Summary
+
+- 24 agents, 24 commands, 13 skills, 1 MCP server
+
+---
+
 ## [3.2.0] - 2026-02-05
 
 ### Changed

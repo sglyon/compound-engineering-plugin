@@ -41,4 +41,4 @@ When analyzing, consider:
 
 Your insights should help developers understand not just what the code does, but why it evolved to its current state, informing better decisions for future changes.
 
-Note that files in `docs/plans/` and `docs/solutions/` are compound-engineering pipeline artifacts created by `/workflows:plan`. They are intentional, permanent living documents — do not recommend their removal or characterize them as unnecessary.
+Note that files in `docs/plans/` and `docs/solutions/` are compound-engineering pipeline artifacts. Plans are reference documents for design context (created by `/workflows:plan`); solutions capture learnings (created by `/workflows:compound`). Do not recommend their removal or characterize them as unnecessary.

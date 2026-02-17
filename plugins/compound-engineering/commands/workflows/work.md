@@ -10,7 +10,9 @@ Execute a work plan efficiently while maintaining quality and finishing features
 
 ## Introduction
 
-This command takes a work document (plan, specification, or todo file) and executes it systematically. The focus is on **shipping complete features** by understanding requirements quickly, following existing patterns, and maintaining quality throughout.
+This command takes a work document (plan, specification, or beads epic) and executes it systematically. The focus is on **shipping complete features** by understanding requirements quickly, following existing patterns, and maintaining quality throughout.
+
+**Important: Beads is the single source of truth for work tracking.** Plan markdown files are reference documents that describe *what* to build and *why*. Beads issues (via `bd` CLI) track *what work is being done, by whom, and what's left*. Never use plan markdown checkboxes to track execution progress — use `bd update`, `bd close`, and `bd epic status` instead.
 
 ## Input Document
 
@@ -93,24 +95,43 @@ This command takes a work document (plan, specification, or todo file) and execu
 
 ### Phase 2: Execute
 
-1. **Task Execution Loop**
+1. **Write Red Tests First**
+
+   Before implementing any task, check the plan for a "Red Tests" section. If it exists, write all failing tests for the current phase FIRST:
+
+   ```
+   # Phase start: Write ALL red tests for this phase
+   - Read the plan's "Red Tests" section for the current phase
+   - Write each test (unit, integration, e2e) as specified
+   - Run the test suite — confirm all new tests FAIL (RED)
+   - Commit red tests: git commit -m "test(scope): add failing tests for [phase/feature]"
+   ```
+
+   If the plan has no "Red Tests" section, write tests for each task as you go (test-first per task).
+
+   **Why red tests first?** Writing tests before code ensures:
+   - Requirements are unambiguous and testable
+   - You know exactly when you're done (all green)
+   - No untested code slips through
+
+2. **Task Execution Loop (Red → Green)**
 
    For each task in priority order:
 
    ```
-   while (tasks remain):
+   while (bd ready --sort priority shows tasks):
      - Claim task: bd update <id> --status in_progress --claim
-     - Read any referenced files from the plan
+     - Read the plan for context on this task (design rationale, references, code examples)
      - Look for similar patterns in codebase
-     - Implement following existing conventions
-     - Write tests for new functionality
-     - Run tests after changes
+     - If no red test exists for this task, write a failing test first
+     - Implement minimum code to make the test pass (GREEN)
+     - Run tests — confirm the target test passes
+     - Run full test suite — confirm no regressions
      - Close task: bd close <id> --reason "Completed"
-     - Mark off the corresponding checkbox in the plan file ([ ] → [x])
      - Evaluate for incremental commit (see below)
    ```
 
-   **IMPORTANT**: Always update the original plan document by checking off completed items. Use the Edit tool to change `- [ ]` to `- [x]` for each task you finish. This keeps the plan as a living document showing progress and ensures no checkboxes are left unchecked.
+   **IMPORTANT**: Use `bd ready --sort priority` to find the next task, NOT the plan's checkboxes. The plan is a reference document for design context — beads is the authority on what work remains. Check progress with `bd epic status`.
 
 2. **Incremental Commits**
 
@@ -141,7 +162,53 @@ This command takes a work document (plan, specification, or todo file) and execu
 
    **Note:** Incremental commits use clean conventional messages without attribution footers. The final Phase 4 commit/PR includes the full attribution.
 
-3. **Follow Existing Patterns**
+3. **Review Checkpoints (After Each Phase/Chunk)**
+
+   The plan may define explicit review checkpoints. If it does, follow them. Otherwise, trigger a review after completing each phase or logical chunk of work (e.g., 3-5 tasks).
+
+   **When to run a checkpoint:**
+   - After completing all tasks in a phase (Phase 1 → review → Phase 2)
+   - After the plan's "Review Checkpoints" say to
+   - Before switching from one domain to another (backend → frontend)
+   - When you've accumulated significant uncommitted complexity
+
+   **Checkpoint process:**
+
+   ```
+   # 1. Verify current phase tests are GREEN
+   # Run project test suite
+
+   # 2. Run /workflows:review on accumulated changes
+   #    This creates beads issues automatically for all findings
+
+   # 3. Check review findings
+   bd list --label code-review --status open
+
+   # 4. Address P1 (critical) findings immediately before proceeding
+   bd ready --label code-review --sort priority
+   # Fix P1s, close their beads issues
+
+   # 5. Compound non-trivial fixes
+   #    For each P1/P2 finding that required a non-trivial fix:
+   #    Run /workflows:compound to document the problem and solution
+   #    This captures the learning while context is fresh
+
+   # 6. Log P2/P3 findings for later — they don't block the next phase
+   # These beads issues persist and can be addressed in Phase 3 or before PR
+
+   # 7. Close the review checkpoint beads issue if one exists
+   #    bd close <checkpoint-id> --reason "Review complete, P1s resolved"
+   ```
+
+   **Key rule:** P1 findings from a review checkpoint BLOCK the next phase. P2/P3 findings are tracked as beads issues but don't block progress.
+
+   **Compounding rule:** After resolving any non-trivial review finding (required research, involved a subtle bug, or taught something new), run `/workflows:compound` to document the solution in `docs/solutions/`. A fix is "non-trivial" if:
+   - It took more than 15 minutes to investigate or resolve
+   - The root cause was surprising or non-obvious
+   - The same mistake could easily happen again
+   - It involved a pattern or gotcha worth remembering
+
+4. **Follow Existing Patterns**
 
    - The plan should reference similar code - read those files first
    - Match naming conventions exactly
@@ -149,14 +216,14 @@ This command takes a work document (plan, specification, or todo file) and execu
    - Follow project coding standards (see CLAUDE.md)
    - When in doubt, grep for similar implementations
 
-4. **Test Continuously**
+5. **Test Continuously**
 
    - Run relevant tests after each significant change
    - Don't wait until the end to test
-   - Fix failures immediately
-   - Add new tests for new functionality
+   - Fix failures immediately — a RED test that was GREEN is a regression
+   - New tests should be written BEFORE the code they test (red/green cycle)
 
-5. **Figma Design Sync** (if applicable)
+6. **Figma Design Sync** (if applicable)
 
    For UI work with Figma designs:
 
@@ -165,16 +232,18 @@ This command takes a work document (plan, specification, or todo file) and execu
    - Fix visual differences identified
    - Repeat until implementation matches design
 
-6. **Track Progress**
+7. **Track Progress (Beads is the Source of Truth)**
+   - **All progress tracking goes through beads.** Never rely on plan markdown checkboxes for status.
    - Update beads as you complete tasks:
      ```bash
      bd close <id> --reason "Done"          # Mark complete
      bd comments add <id> "Progress note"   # Add context
      bd create "New task" --parent <epic>    # If scope expands
-     bd epic status                          # Check overall progress
+     bd ready --sort priority               # What's next?
+     bd epic status                         # Overall progress
      ```
-   - Note any blockers or unexpected discoveries
-   - Keep user informed of major milestones
+   - Note any blockers or unexpected discoveries as beads comments
+   - Keep user informed of major milestones (reference `bd epic status` output)
 
 ### Phase 3: Quality Check
 
@@ -210,8 +279,10 @@ This command takes a work document (plan, specification, or todo file) and execu
    Present findings to user and address critical issues.
 
 3. **Final Validation**
+   - All red tests are GREEN (every test from the plan's "Red Tests" section passes)
    - All beads issues closed (`bd epic status` shows 100%)
-   - All tests pass
+   - All review checkpoint beads resolved (no open P1/P2 issues with `code-review` label)
+   - All tests pass (full suite, not just new tests)
    - Linting passes
    - Code follows existing patterns
    - Figma designs match (if applicable)
@@ -317,11 +388,19 @@ This command takes a work document (plan, specification, or todo file) and execu
 - Don't wait for perfect understanding - ask questions and move
 - The goal is to **finish the feature**, not create perfect process
 
-### The Plan is Your Guide
+### The Plan is Your Reference, Beads is Your Tracker
 
-- Work documents should reference similar code and patterns
-- Load those references and follow them
-- Don't reinvent - match what exists
+- The plan describes *what* to build and *why* — read it for design context, code references, and rationale
+- Beads tracks *what work remains* — use `bd ready` to find next tasks, `bd epic status` for progress
+- Never track progress by checking off plan markdown checkboxes — that's beads' job
+- Don't reinvent - match existing patterns referenced in the plan
+
+### Red/Green TDD
+
+- Write failing tests BEFORE writing implementation code
+- Each task starts with a RED test and ends with a GREEN test
+- You know you're done when all red tests are green
+- If the plan has a "Red Tests" section, write them all at phase start
 
 ### Test As You Go
 
@@ -329,17 +408,25 @@ This command takes a work document (plan, specification, or todo file) and execu
 - Fix failures immediately
 - Continuous testing prevents big surprises
 
+### Review After Each Chunk, Then Compound
+
+- Run `/workflows:review` after completing each phase or chunk of work
+- Review findings become beads issues automatically
+- Fix P1 findings before moving to the next phase
+- P2/P3 findings are tracked but don't block progress
+- Run `/workflows:compound` for non-trivial fixes — capture the learning while context is fresh
+
 ### Quality is Built In
 
 - Follow existing patterns
-- Write tests for new code
+- Write tests BEFORE new code (red/green)
 - Run linting before pushing
 - Use reviewer agents for complex/risky changes only
 
 ### Ship Complete Features
 
-- Mark all tasks completed before moving on
-- Don't leave features 80% done
+- `bd epic status` should show 100% before moving on
+- Don't leave features 80% done — close every beads issue or explicitly defer it
 - A finished feature that ships beats a perfect feature that doesn't
 
 ## Quality Checklist
@@ -347,6 +434,8 @@ This command takes a work document (plan, specification, or todo file) and execu
 Before creating PR, verify:
 
 - [ ] All clarifying questions asked and answered
+- [ ] All red tests are GREEN (plan's "Red Tests" section fully satisfied)
+- [ ] All review checkpoint beads resolved (no open P1/P2 `code-review` issues)
 - [ ] All beads issues closed (`bd epic status` shows 100%)
 - [ ] Tests pass (run project's test command)
 - [ ] Linting passes (use project linter)
@@ -374,7 +463,12 @@ For most features: tests + linting + following patterns is sufficient.
 - **Analysis paralysis** - Don't overthink, read the plan and execute
 - **Skipping clarifying questions** - Ask now, not after building wrong thing
 - **Ignoring plan references** - The plan has links for a reason
+- **Writing tests after code** - Write RED tests first, then make them GREEN
+- **Skipping review checkpoints** - Run `/workflows:review` after each phase to catch issues early
+- **Ignoring review findings** - P1 beads from reviews block the next phase for a reason
+- **Not compounding after fixes** - Non-trivial review fixes are learnings; run `/workflows:compound` or lose the insight
 - **Testing at the end** - Test continuously or suffer later
-- **Forgetting Beads** - Track progress with `bd` or lose track of what's done
+- **Tracking progress in markdown** - Plan checkboxes are NOT work trackers; use `bd` exclusively for status
+- **Forgetting Beads** - `bd ready` and `bd epic status` are the only way to know what's left
 - **80% done syndrome** - Finish the feature, don't move on early
 - **Over-reviewing simple changes** - Save reviewer agents for complex work

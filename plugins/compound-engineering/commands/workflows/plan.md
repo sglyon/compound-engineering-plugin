@@ -10,7 +10,9 @@ argument-hint: "[feature description, bug report, or improvement idea]"
 
 **Note: The current year is 2026.** Use this when dating plans and searching for recent documentation.
 
-Transform feature descriptions, bug reports, or improvement ideas into well-structured markdown files issues that follow project conventions and best practices. This command provides flexible detail levels to match your needs.
+Transform feature descriptions, bug reports, or improvement ideas into well-structured plan documents that follow project conventions and best practices. This command provides flexible detail levels to match your needs.
+
+**Important: Plans are reference documents, not work trackers.** The plan describes *what* to build, *why*, and *how*. Once converted to beads issues (via `plan-to-beads`), beads becomes the single source of truth for tracking what work is done, in progress, or remaining. Plan checkboxes define requirements during planning — they are NOT checked off during execution.
 
 ## Feature Description
 
@@ -158,6 +160,40 @@ After planning the issue structure, run SpecFlow Analyzer to validate and refine
 - [ ] Incorporate any identified gaps or edge cases into the issue
 - [ ] Update acceptance criteria based on SpecFlow findings
 
+### 3.5. TDD Strategy (Red/Green Planning)
+
+**Every plan should define a test-first approach.** Before implementation begins, the plan must specify:
+
+1. **Red tests** — Failing tests that define the expected behavior before any code is written
+2. **Green validation** — How to confirm all tests pass after implementation
+3. **Review checkpoints** — Points during the epic where `/workflows:review` runs and beads issues are created
+
+**Test-first planning checklist:**
+
+- [ ] Identify key behaviors that can be expressed as tests (unit, integration, e2e)
+- [ ] Draft test descriptions or pseudocode for each acceptance criterion
+- [ ] Group tests by phase — Phase 1 tests are written and RED before Phase 1 implementation starts
+- [ ] Define the "all green" gate — what test suite command confirms the epic is complete
+- [ ] Plan review checkpoints (see below)
+
+**Review checkpoint planning:**
+
+After each phase or logical chunk of work, the plan should call for:
+1. Run `/workflows:review` on accumulated changes to catch issues early
+2. Create beads issues from any review findings (automatic — review creates them)
+3. Triage and address P1/P2 findings before proceeding to the next phase
+4. Run `/workflows:compound` for any non-trivial findings that were resolved — document the solution so the learning compounds for future work
+
+Include a `## Review Checkpoints` section in the plan that specifies when reviews happen. Example:
+
+```markdown
+## Review Checkpoints
+
+- [ ] **After Phase 1**: Run `/workflows:review` → fix findings → `/workflows:compound` non-trivial fixes
+- [ ] **After Phase 2**: Run `/workflows:review` → fix findings → `/workflows:compound` non-trivial fixes
+- [ ] **Before PR**: Final `/workflows:review` → comprehensive quality gate → compound any learnings
+```
+
 ### 4. Choose Implementation Detail Level
 
 Select how comprehensive you want the issue to be, simpler is mostly better.
@@ -194,18 +230,31 @@ date: YYYY-MM-DD
 
 [Any critical information]
 
-## MVP
+## Red Tests (Write First)
 
-### test.ts
+Tests that must FAIL before implementation begins:
+
+### test_feature.ts
 
 ```typescript
-class Test {
-  name: string;
-  constructor() {
-    this.name = "test";
-  }
-}
+describe("Feature", () => {
+  it("should [expected behavior]", () => {
+    // This test should FAIL (red) until implementation is complete
+  });
+});
 ```
+
+## MVP
+
+### feature.ts
+
+```typescript
+// Implementation to make red tests green
+```
+
+## Review Checkpoints
+
+- [ ] After implementation: Run `/workflows:review` → create beads → `/workflows:compound` non-trivial fixes
 
 ## References
 
@@ -254,11 +303,24 @@ date: YYYY-MM-DD
 - Performance implications
 - Security considerations
 
+## Red Tests (Write First)
+
+Failing tests that define expected behavior before implementation:
+
+- [ ] Test for requirement 1 (RED → GREEN after implementation)
+- [ ] Test for requirement 2 (RED → GREEN after implementation)
+- [ ] Integration test for end-to-end flow
+
 ## Acceptance Criteria
 
 - [ ] Detailed requirement 1
 - [ ] Detailed requirement 2
-- [ ] Testing requirements
+- [ ] All red tests are GREEN
+
+## Review Checkpoints
+
+- [ ] After core implementation: `/workflows:review` → triage beads → `/workflows:compound` non-trivial fixes
+- [ ] Before PR: Final `/workflows:review` → all P1 findings resolved → `/workflows:compound` learnings
 
 ## Success Metrics
 
@@ -342,6 +404,23 @@ date: YYYY-MM-DD
 
 [Other solutions evaluated and why rejected]
 
+## Red Tests (Write First)
+
+Failing tests written BEFORE implementation to define expected behavior:
+
+### Phase 1 Tests
+- [ ] [Foundation test 1] — validates core setup (RED → GREEN in Phase 1)
+- [ ] [Foundation test 2] — validates data model (RED → GREEN in Phase 1)
+
+### Phase 2 Tests
+- [ ] [Core feature test 1] — validates main flow (RED → GREEN in Phase 2)
+- [ ] [Integration test 1] — validates component interaction (RED → GREEN in Phase 2)
+
+### Phase 3 Tests
+- [ ] [E2E test 1] — validates complete user journey (RED → GREEN in Phase 3)
+
+**Green Gate:** All tests pass via `[test command]` before PR is created.
+
 ## Acceptance Criteria
 
 ### Functional Requirements
@@ -356,9 +435,16 @@ date: YYYY-MM-DD
 
 ### Quality Gates
 
-- [ ] Test coverage requirements
+- [ ] All red tests are GREEN
+- [ ] Test coverage requirements met
 - [ ] Documentation completeness
 - [ ] Code review approval
+
+## Review Checkpoints
+
+- [ ] **After Phase 1**: Run `/workflows:review` → resolve findings → `/workflows:compound` non-trivial fixes
+- [ ] **After Phase 2**: Run `/workflows:review` → resolve findings → `/workflows:compound` non-trivial fixes
+- [ ] **Before PR**: Final `/workflows:review` → all P1 findings resolved → `/workflows:compound` learnings
 
 ## Success Metrics
 
@@ -416,7 +502,7 @@ Apply best practices for clarity and actionability, making the issue easy to sca
 - [ ] Use clear, descriptive headings with proper hierarchy (##, ###)
 - [ ] Include code examples in triple backticks with language syntax highlighting
 - [ ] Add screenshots/mockups if UI-related (drag & drop or use image hosting)
-- [ ] Use task lists (- [ ]) for trackable items that can be checked off
+- [ ] Use task lists (- [ ]) to define requirements and acceptance criteria (these become beads issues via `plan-to-beads`, not manually checked off)
 - [ ] Add collapsible sections for lengthy logs or optional details using `<details>` tags
 - [ ] Apply appropriate emoji for visual scanning (🐛 bug, ✨ feature, 📚 docs, ♻️ refactor)
 
@@ -468,6 +554,8 @@ function processUser(user: User) {
 - [ ] All template sections are complete
 - [ ] Links and references are working
 - [ ] Acceptance criteria are measurable
+- [ ] **Red tests defined** — failing tests listed for each phase/acceptance criterion
+- [ ] **Review checkpoints defined** — when `/workflows:review` runs during execution
 - [ ] Add names of files in pseudo code examples and todo lists
 - [ ] Add an ERD mermaid diagram if applicable for new model changes
 
