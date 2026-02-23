@@ -383,7 +383,7 @@ After creating all issues, present comprehensive summary:
 
 4. **Track Progress**:
    ```bash
-   bd update <id> --status in_progress --claim  # Start work
+   bd update <id> --claim  # Claim + set in_progress atomically
    bd close <id> --reason "Fixed in commit <sha>"  # Complete
    bd sync  # Sync to git
    ```

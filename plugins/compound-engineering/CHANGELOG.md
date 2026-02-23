@@ -5,6 +5,19 @@ All notable changes to the compound-engineering plugin will be documented in thi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.3.1] - 2026-02-23
+
+### Fixed
+
+- **`beads` skill** - Updated `bd` CLI usage for current API:
+  - Removed deprecated `bd sync --full`; clarified two sync topologies: server mode (no push/pull needed) vs. embedded + remote mode (`bd dolt push/pull`)
+  - Fixed `bd list --priority 0,1` → `bd list --priority-max 1` for filtering critical + high priority issues
+  - Simplified `bd update <id> --status in_progress --claim` → `bd update <id> --claim` (`--claim` already sets `in_progress`)
+  - Added `bd prime` and `bd onboard` to AI Agent Quickstart section
+- **`/triage`, `/workflows:work`, `/workflows:review`, `/resolve_todo_parallel` commands** - Applied same `--claim` simplification
+
+---
+
 ## [3.3.0] - 2026-02-16
 
 ### Changed

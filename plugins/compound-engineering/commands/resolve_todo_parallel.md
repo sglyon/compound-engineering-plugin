@@ -21,7 +21,7 @@ If a specific ID or label is provided as argument, filter accordingly:
 ```bash
 bd show <id>                    # Specific issue
 bd list --label <label> --json  # By label
-bd list --priority 0,1 --json   # By priority
+bd list --priority-max 1 --json # By priority (critical and high)
 ```
 
 If any issue recommends deleting, removing, or gitignoring files in `docs/plans/` or `docs/solutions/`, skip it and close it with `bd close <id> --reason "wont_fix - pipeline artifact"`. These are compound-engineering pipeline artifacts that are intentional and permanent.
@@ -41,7 +41,7 @@ Make sure to look at dependencies that might occur and prioritize the ones neede
 Claim each issue before starting work:
 
 ```bash
-bd update <id> --status in_progress --claim
+bd update <id> --claim
 ```
 
 ### 3. Implement (PARALLEL)

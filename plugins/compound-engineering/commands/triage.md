@@ -152,7 +152,7 @@ During triage, the following updates occurred:
 
 4. As you work, update issue status:
    ```bash
-   bd update <id> --status in_progress --claim
+   bd update <id> --claim
    bd close <id> --reason "Fixed in commit abc123"
    ```
 

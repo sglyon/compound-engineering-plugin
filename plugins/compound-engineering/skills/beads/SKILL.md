@@ -30,6 +30,20 @@ bd status
 bd init
 ```
 
+## AI Agent Quickstart
+
+Before starting work in a beads-enabled project, run:
+
+```bash
+# Get AI-optimized workflow context (~80 lines of guidance)
+bd prime
+
+# Get the AGENTS.md snippet to add to a project
+bd onboard
+```
+
+`bd prime` outputs dynamic workflow context. Add `bd hooks install` to auto-inject it at session start.
+
 ## Issue Model
 
 Each bead (issue) has these key fields:
@@ -102,8 +116,8 @@ bd blocked
 bd list --status open
 
 # List by priority
-bd list --priority 0    # critical only
-bd list --priority 0,1  # critical and high
+bd list --priority 0          # critical only
+bd list --priority-max 1      # critical and high (0 and 1)
 
 # List by label
 bd list --label security
@@ -116,8 +130,8 @@ bd search "payment"
 ### Updating Issues
 
 ```bash
-# Claim and start work
-bd update <id> --status in_progress --claim
+# Claim and start work (--claim atomically sets assignee + status=in_progress)
+bd update <id> --claim
 
 # Change priority
 bd update <id> --priority 0
@@ -248,7 +262,7 @@ bd search "keyword"         # Full-text search
 
 **Updating:**
 ```bash
-bd update <id> --status in_progress --claim    # Start work
+bd update <id> --claim                         # Claim + set in_progress atomically
 bd comments add <id> "Progress note"           # Add comment
 bd close <id> --reason "Done"                  # Complete
 ```
@@ -270,8 +284,11 @@ bd label list-all                 # All labels in use
 **Sync with git:**
 ```bash
 bd sync              # Export DB to JSONL (git-tracked)
-bd sync --full       # Pull + merge + export + commit + push
 ```
+
+Two sync topologies:
+- **Server mode** (client → remote Dolt server): All reads/writes go directly to the shared server. No push/pull needed — data is already shared.
+- **Embedded + remote mode**: Use `bd dolt push` / `bd dolt pull` to sync a local embedded Dolt store with a remote (DoltHub, etc.).
 
 ## Key Distinctions
 

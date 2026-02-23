@@ -120,7 +120,7 @@ This command takes a work document (plan, specification, or beads epic) and exec
 
    ```
    while (bd ready --sort priority shows tasks):
-     - Claim task: bd update <id> --status in_progress --claim
+     - Claim task: bd update <id> --claim
      - Read the plan for context on this task (design rationale, references, code examples)
      - Look for similar patterns in codebase
      - If no red test exists for this task, write a failing test first
