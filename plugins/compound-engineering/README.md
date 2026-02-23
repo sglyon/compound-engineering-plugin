@@ -6,7 +6,7 @@ AI-powered development tools that get smarter with every use. Make each unit of 
 
 | Component | Count |
 |-----------|-------|
-| Agents | 24 |
+| Agents | 27 |
 | Commands | 24 |
 | Skills | 13 |
 | MCP Servers | 1 |
@@ -15,7 +15,7 @@ AI-powered development tools that get smarter with every use. Make each unit of 
 
 Agents are organized into categories for easier discovery.
 
-### Review (12)
+### Review (15)
 
 | Agent | Description |
 |-------|-------------|
@@ -31,6 +31,9 @@ Agents are organized into categories for easier discovery.
 | `performance-oracle` | Performance analysis and optimization |
 | `security-sentinel` | Security audits and vulnerability assessments |
 | `julik-frontend-races-reviewer` | Review JavaScript code for race conditions |
+| `sglyon-ash-reviewer` | Ash Framework policies, state machines, and authorization |
+| `sglyon-elixir-reviewer` | Elixir runtime safety, process correctness, BEAM pitfalls |
+| `sglyon-liveview-reviewer` | Phoenix LiveView lifecycle, streams, forms, and PubSub |
 
 ### Research (4)
 

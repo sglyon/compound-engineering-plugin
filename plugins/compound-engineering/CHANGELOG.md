@@ -5,6 +5,16 @@ All notable changes to the compound-engineering plugin will be documented in thi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.4.0] - 2026-02-23
+
+### Added
+
+- **`sglyon-ash-reviewer` agent** - Review Ash Framework code for policy correctness, state machine safety, CAS patterns, and authorization completeness
+- **`sglyon-elixir-reviewer` agent** - Review Elixir code for runtime safety, process correctness, atom safety, and BEAM-specific anti-patterns
+- **`sglyon-liveview-reviewer` agent** - Review Phoenix LiveView code for bang functions, form input patterns, stream state, PubSub debouncing, and authorization bypasses
+
+---
+
 ## [3.3.1] - 2026-02-23
 
 ### Fixed
