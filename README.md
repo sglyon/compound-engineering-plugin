@@ -14,27 +14,69 @@ A Claude Code plugin marketplace featuring the **Compound Engineering Plugin** â
 /plugin install compound-engineering
 ```
 
-## OpenCode + Codex (experimental) Install
+## Other AI Coding Tools (experimental)
 
-This repo includes a Bun/TypeScript CLI that converts Claude Code plugins to OpenCode and Codex.
+This repo includes a Bun/TypeScript CLI that converts Claude Code plugins to OpenCode, Codex, Factory Droid, Pi, Gemini CLI, GitHub Copilot, and Kiro CLI.
 
 ```bash
-# convert the compound-engineering plugin into OpenCode format
-bunx @every-env/compound-plugin install compound-engineering --to opencode
+# convert to OpenCode format
+bun run src/index.ts install ./plugins/compound-engineering --to opencode
 
 # convert to Codex format
-bunx @every-env/compound-plugin install compound-engineering --to codex
+bun run src/index.ts install ./plugins/compound-engineering --to codex
+
+# convert to Factory Droid format
+bun run src/index.ts install ./plugins/compound-engineering --to droid
+
+# convert to Pi format
+bun run src/index.ts install ./plugins/compound-engineering --to pi
+
+# convert to Gemini CLI format
+bun run src/index.ts install ./plugins/compound-engineering --to gemini
+
+# convert to GitHub Copilot format
+bun run src/index.ts install ./plugins/compound-engineering --to copilot
+
+# convert to Kiro CLI format
+bun run src/index.ts install ./plugins/compound-engineering --to kiro
 ```
 
-Local dev:
+OpenCode output is written to `~/.config/opencode` by default. Commands are written as individual `.md` files. `opencode.json` (MCP servers) is deep-merged into any existing file â€” user keys are preserved.
+Codex output is written to `~/.codex/prompts` and `~/.codex/skills`, with each Claude command converted into both a prompt and a skill. Generated Codex skill descriptions are truncated to 1024 characters (Codex limit).
+Droid output is written to `~/.factory/` with commands, droids (agents), and skills.
+Pi output is written to `~/.pi/agent/` with prompts, skills, extensions, and MCPorter config.
+Gemini output is written to `.gemini/` with skills, commands (`.toml`), and `settings.json` (MCP servers).
+Copilot output is written to `.github/` with agents (`.agent.md`), skills, and `copilot-mcp-config.json`.
+Kiro output is written to `.kiro/` with custom agents, skills, steering files, and `mcp.json`.
+
+All provider targets are experimental and may change as the formats evolve.
+
+## Sync Personal Config
+
+Sync your personal Claude Code config (`~/.claude/`) to other AI coding tools:
 
 ```bash
-bun run src/index.ts install ./plugins/compound-engineering --to opencode
+# Sync skills and MCP servers to OpenCode
+bun run src/index.ts sync --target opencode
+
+# Sync to Codex
+bun run src/index.ts sync --target codex
+
+# Sync to Pi
+bun run src/index.ts sync --target pi
+
+# Sync to Droid (skills only)
+bun run src/index.ts sync --target droid
+
+# Sync to GitHub Copilot (skills + MCP servers)
+bun run src/index.ts sync --target copilot
 ```
 
-OpenCode output is written to `~/.opencode` by default, with `opencode.json` at the root and `agents/`, `skills/`, and `plugins/` alongside it.
-Both provider targets are experimental and may change as the formats evolve.
-Codex output is written to `~/.codex/prompts` and `~/.codex/skills`, with each Claude command converted into both a prompt and a skill (the prompt instructs Codex to load the corresponding skill). Generated Codex skill descriptions are truncated to 1024 characters (Codex limit).
+This syncs:
+- Personal skills from `~/.claude/skills/` (as symlinks)
+- MCP servers from `~/.claude/settings.json`
+
+Skills are symlinked (not copied) so changes in Claude Code are reflected immediately.
 
 ## Workflow
 
