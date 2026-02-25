@@ -7,6 +7,7 @@ import { targets } from "../targets"
 import { pathExists } from "../utils/files"
 import type { PermissionMode } from "../converters/claude-to-opencode"
 import { ensureCodexAgentsFile } from "../utils/codex-agents"
+import { expandHome, resolveTargetHome } from "../utils/resolve-home"
 
 const permissionModes: PermissionMode[] = ["none", "broad", "from-commands"]
 
@@ -24,7 +25,7 @@ export default defineCommand({
     to: {
       type: "string",
       default: "opencode",
-      description: "Target format (opencode | codex)",
+      description: "Target format (opencode | codex | droid | cursor | pi | copilot | gemini | kiro)",
     },
     output: {
       type: "string",
@@ -36,14 +37,19 @@ export default defineCommand({
       alias: "codex-home",
       description: "Write Codex output to this .codex root (ex: ~/.codex)",
     },
+    piHome: {
+      type: "string",
+      alias: "pi-home",
+      description: "Write Pi output to this Pi root (ex: ~/.pi/agent or ./.pi)",
+    },
     also: {
       type: "string",
       description: "Comma-separated extra targets to generate (ex: codex)",
     },
     permissions: {
       type: "string",
-      default: "broad",
-      description: "Permission mapping: none | broad | from-commands",
+      default: "none", // Default is "none" -- writing global permissions to opencode.json pollutes user config. See ADR-003.
+      description: "Permission mapping written to opencode.json: none (default) | broad | from-command",
     },
     agentMode: {
       type: "string",
@@ -76,7 +82,8 @@ export default defineCommand({
     try {
       const plugin = await loadClaudePlugin(resolvedPlugin.path)
       const outputRoot = resolveOutputRoot(args.output)
-      const codexHome = resolveCodexRoot(args.codexHome)
+      const codexHome = resolveTargetHome(args.codexHome, path.join(os.homedir(), ".codex"))
+      const piHome = resolveTargetHome(args.piHome, path.join(os.homedir(), ".pi", "agent"))
 
       const options = {
         agentMode: String(args.agentMode) === "primary" ? "primary" : "subagent",
@@ -88,7 +95,8 @@ export default defineCommand({
       if (!bundle) {
         throw new Error(`Target ${targetName} did not return a bundle.`)
       }
-      const primaryOutputRoot = targetName === "codex" && codexHome ? codexHome : outputRoot
+      const hasExplicitOutput = Boolean(args.output && String(args.output).trim())
+      const primaryOutputRoot = resolveTargetOutputRoot(targetName, outputRoot, codexHome, piHome, hasExplicitOutput)
       await target.write(primaryOutputRoot, bundle)
       console.log(`Installed ${plugin.manifest.name} to ${primaryOutputRoot}`)
 
@@ -109,9 +117,7 @@ export default defineCommand({
           console.warn(`Skipping ${extra}: no output returned.`)
           continue
         }
-        const extraRoot = extra === "codex" && codexHome
-          ? codexHome
-          : path.join(outputRoot, extra)
+        const extraRoot = resolveTargetOutputRoot(extra, path.join(outputRoot, extra), codexHome, piHome, hasExplicitOutput)
         await handler.write(extraRoot, extraBundle)
         console.log(`Installed ${plugin.manifest.name} to ${extraRoot}`)
       }
@@ -133,12 +139,15 @@ type ResolvedPluginPath = {
 }
 
 async function resolvePluginPath(input: string): Promise<ResolvedPluginPath> {
-  const directPath = path.resolve(input)
-  if (await pathExists(directPath)) return { path: directPath }
+  // Only treat as a local path if it explicitly looks like one
+  if (input.startsWith(".") || input.startsWith("/") || input.startsWith("~")) {
+    const expanded = expandHome(input)
+    const directPath = path.resolve(expanded)
+    if (await pathExists(directPath)) return { path: directPath }
+    throw new Error(`Local plugin path not found: ${directPath}`)
+  }
 
-  const pluginsPath = path.join(process.cwd(), "plugins", input)
-  if (await pathExists(pluginsPath)) return { path: pluginsPath }
-
+  // Otherwise, always fetch the latest from GitHub
   return await resolveGitHubPluginPath(input)
 }
 
@@ -150,26 +159,6 @@ function parseExtraTargets(value: unknown): string[] {
     .filter(Boolean)
 }
 
-function resolveCodexHome(value: unknown): string | null {
-  if (!value) return null
-  const raw = String(value).trim()
-  if (!raw) return null
-  const expanded = expandHome(raw)
-  return path.resolve(expanded)
-}
-
-function resolveCodexRoot(value: unknown): string {
-  return resolveCodexHome(value) ?? path.join(os.homedir(), ".codex")
-}
-
-function expandHome(value: string): string {
-  if (value === "~") return os.homedir()
-  if (value.startsWith(`~${path.sep}`)) {
-    return path.join(os.homedir(), value.slice(2))
-  }
-  return value
-}
-
 function resolveOutputRoot(value: unknown): string {
   if (value && String(value).trim()) {
     const expanded = expandHome(String(value).trim())
@@ -178,6 +167,35 @@ function resolveOutputRoot(value: unknown): string {
   // OpenCode global config lives at ~/.config/opencode per XDG spec
   // See: https://opencode.ai/docs/config/
   return path.join(os.homedir(), ".config", "opencode")
+}
+
+function resolveTargetOutputRoot(
+  targetName: string,
+  outputRoot: string,
+  codexHome: string,
+  piHome: string,
+  hasExplicitOutput: boolean,
+): string {
+  if (targetName === "codex") return codexHome
+  if (targetName === "pi") return piHome
+  if (targetName === "droid") return path.join(os.homedir(), ".factory")
+  if (targetName === "cursor") {
+    const base = hasExplicitOutput ? outputRoot : process.cwd()
+    return path.join(base, ".cursor")
+  }
+  if (targetName === "gemini") {
+    const base = hasExplicitOutput ? outputRoot : process.cwd()
+    return path.join(base, ".gemini")
+  }
+  if (targetName === "copilot") {
+    const base = hasExplicitOutput ? outputRoot : process.cwd()
+    return path.join(base, ".github")
+  }
+  if (targetName === "kiro") {
+    const base = hasExplicitOutput ? outputRoot : process.cwd()
+    return path.join(base, ".kiro")
+  }
+  return outputRoot
 }
 
 async function resolveGitHubPluginPath(pluginName: string): Promise<ResolvedPluginPath> {
@@ -207,7 +225,7 @@ async function resolveGitHubPluginPath(pluginName: string): Promise<ResolvedPlug
 function resolveGitHubSource(): string {
   const override = process.env.COMPOUND_PLUGIN_GITHUB_SOURCE
   if (override && override.trim()) return override.trim()
-  return "https://github.com/sglyon/compound-engineering-plugin"
+  return "https://github.com/EveryInc/compound-engineering-plugin"
 }
 
 async function cloneGitHubRepo(source: string, destination: string): Promise<void> {

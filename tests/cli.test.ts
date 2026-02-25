@@ -180,6 +180,68 @@ describe("CLI", () => {
     expect(await exists(path.join(tempRoot, ".config", "opencode", "agents", "repo-research-analyst.md"))).toBe(true)
   })
 
+  test("install by name ignores same-named local directory", async () => {
+    const tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "cli-shadow-"))
+    const workspaceRoot = await fs.mkdtemp(path.join(os.tmpdir(), "cli-shadow-workspace-"))
+    const repoRoot = await fs.mkdtemp(path.join(os.tmpdir(), "cli-shadow-repo-"))
+
+    // Create a directory with the plugin name that is NOT a valid plugin
+    const shadowDir = path.join(workspaceRoot, "compound-engineering")
+    await fs.mkdir(shadowDir, { recursive: true })
+    await fs.writeFile(path.join(shadowDir, "README.md"), "Not a plugin")
+
+    // Set up a fake GitHub source with a valid plugin
+    const fixtureRoot = path.join(import.meta.dir, "fixtures", "sample-plugin")
+    const pluginRoot = path.join(repoRoot, "plugins", "compound-engineering")
+    await fs.mkdir(path.dirname(pluginRoot), { recursive: true })
+    await fs.cp(fixtureRoot, pluginRoot, { recursive: true })
+
+    const gitEnv = {
+      ...process.env,
+      GIT_AUTHOR_NAME: "Test",
+      GIT_AUTHOR_EMAIL: "test@example.com",
+      GIT_COMMITTER_NAME: "Test",
+      GIT_COMMITTER_EMAIL: "test@example.com",
+    }
+    await runGit(["init"], repoRoot, gitEnv)
+    await runGit(["add", "."], repoRoot, gitEnv)
+    await runGit(["commit", "-m", "fixture"], repoRoot, gitEnv)
+
+    const projectRoot = path.join(import.meta.dir, "..")
+    const proc = Bun.spawn([
+      "bun",
+      "run",
+      path.join(projectRoot, "src", "index.ts"),
+      "install",
+      "compound-engineering",
+      "--to",
+      "opencode",
+      "--output",
+      tempRoot,
+    ], {
+      cwd: workspaceRoot,
+      stdout: "pipe",
+      stderr: "pipe",
+      env: {
+        ...process.env,
+        HOME: tempRoot,
+        COMPOUND_PLUGIN_GITHUB_SOURCE: repoRoot,
+      },
+    })
+
+    const exitCode = await proc.exited
+    const stdout = await new Response(proc.stdout).text()
+    const stderr = await new Response(proc.stderr).text()
+
+    if (exitCode !== 0) {
+      throw new Error(`CLI failed (exit ${exitCode}).\nstdout: ${stdout}\nstderr: ${stderr}`)
+    }
+
+    // Should succeed by fetching from GitHub, NOT failing on the local shadow directory
+    expect(stdout).toContain("Installed compound-engineering")
+    expect(await exists(path.join(tempRoot, "opencode.json"))).toBe(true)
+  })
+
   test("convert writes OpenCode output", async () => {
     const tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "cli-convert-"))
     const fixtureRoot = path.join(import.meta.dir, "fixtures", "sample-plugin")
@@ -287,5 +349,159 @@ describe("CLI", () => {
     expect(await exists(path.join(codexRoot, "skills", "workflows-review", "SKILL.md"))).toBe(true)
     expect(await exists(path.join(codexRoot, "skills", "skill-one", "SKILL.md"))).toBe(true)
     expect(await exists(path.join(codexRoot, "AGENTS.md"))).toBe(true)
+  })
+
+  test("convert supports --pi-home for pi output", async () => {
+    const tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "cli-pi-home-"))
+    const piRoot = path.join(tempRoot, ".pi")
+    const fixtureRoot = path.join(import.meta.dir, "fixtures", "sample-plugin")
+
+    const proc = Bun.spawn([
+      "bun",
+      "run",
+      "src/index.ts",
+      "convert",
+      fixtureRoot,
+      "--to",
+      "pi",
+      "--pi-home",
+      piRoot,
+    ], {
+      cwd: path.join(import.meta.dir, ".."),
+      stdout: "pipe",
+      stderr: "pipe",
+    })
+
+    const exitCode = await proc.exited
+    const stdout = await new Response(proc.stdout).text()
+    const stderr = await new Response(proc.stderr).text()
+
+    if (exitCode !== 0) {
+      throw new Error(`CLI failed (exit ${exitCode}).\nstdout: ${stdout}\nstderr: ${stderr}`)
+    }
+
+    expect(stdout).toContain("Converted compound-engineering")
+    expect(stdout).toContain(piRoot)
+    expect(await exists(path.join(piRoot, "prompts", "workflows-review.md"))).toBe(true)
+    expect(await exists(path.join(piRoot, "skills", "repo-research-analyst", "SKILL.md"))).toBe(true)
+    expect(await exists(path.join(piRoot, "extensions", "compound-engineering-compat.ts"))).toBe(true)
+    expect(await exists(path.join(piRoot, "compound-engineering", "mcporter.json"))).toBe(true)
+  })
+
+  test("install supports --also with pi output", async () => {
+    const tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "cli-also-pi-"))
+    const fixtureRoot = path.join(import.meta.dir, "fixtures", "sample-plugin")
+    const piRoot = path.join(tempRoot, ".pi")
+
+    const proc = Bun.spawn([
+      "bun",
+      "run",
+      "src/index.ts",
+      "install",
+      fixtureRoot,
+      "--to",
+      "opencode",
+      "--also",
+      "pi",
+      "--pi-home",
+      piRoot,
+      "--output",
+      tempRoot,
+    ], {
+      cwd: path.join(import.meta.dir, ".."),
+      stdout: "pipe",
+      stderr: "pipe",
+    })
+
+    const exitCode = await proc.exited
+    const stdout = await new Response(proc.stdout).text()
+    const stderr = await new Response(proc.stderr).text()
+
+    if (exitCode !== 0) {
+      throw new Error(`CLI failed (exit ${exitCode}).\nstdout: ${stdout}\nstderr: ${stderr}`)
+    }
+
+    expect(stdout).toContain("Installed compound-engineering")
+    expect(stdout).toContain(piRoot)
+    expect(await exists(path.join(piRoot, "prompts", "workflows-review.md"))).toBe(true)
+    expect(await exists(path.join(piRoot, "extensions", "compound-engineering-compat.ts"))).toBe(true)
+  })
+
+  test("install --to opencode uses permissions:none by default", async () => {
+    const tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "cli-perms-none-"))
+    const fixtureRoot = path.join(import.meta.dir, "fixtures", "sample-plugin")
+
+    const proc = Bun.spawn([
+      "bun",
+      "run",
+      "src/index.ts",
+      "install",
+      fixtureRoot,
+      "--to",
+      "opencode",
+      "--output",
+      tempRoot,
+    ], {
+      cwd: path.join(import.meta.dir, ".."),
+      stdout: "pipe",
+      stderr: "pipe",
+    })
+
+    const exitCode = await proc.exited
+    const stdout = await new Response(proc.stdout).text()
+    const stderr = await new Response(proc.stderr).text()
+
+    if (exitCode !== 0) {
+      throw new Error(`CLI failed (exit ${exitCode}).\nstdout: ${stdout}\nstderr: ${stderr}`)
+    }
+
+    expect(stdout).toContain("Installed compound-engineering")
+
+    const opencodeJsonPath = path.join(tempRoot, "opencode.json")
+    const content = await fs.readFile(opencodeJsonPath, "utf-8")
+    const json = JSON.parse(content)
+
+    expect(json).not.toHaveProperty("permission")
+    expect(json).not.toHaveProperty("tools")
+  })
+
+  test("install --to opencode --permissions broad writes permission block", async () => {
+    const tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "cli-perms-broad-"))
+    const fixtureRoot = path.join(import.meta.dir, "fixtures", "sample-plugin")
+
+    const proc = Bun.spawn([
+      "bun",
+      "run",
+      "src/index.ts",
+      "install",
+      fixtureRoot,
+      "--to",
+      "opencode",
+      "--permissions",
+      "broad",
+      "--output",
+      tempRoot,
+    ], {
+      cwd: path.join(import.meta.dir, ".."),
+      stdout: "pipe",
+      stderr: "pipe",
+    })
+
+    const exitCode = await proc.exited
+    const stdout = await new Response(proc.stdout).text()
+    const stderr = await new Response(proc.stderr).text()
+
+    if (exitCode !== 0) {
+      throw new Error(`CLI failed (exit ${exitCode}).\nstdout: ${stdout}\nstderr: ${stderr}`)
+    }
+
+    expect(stdout).toContain("Installed compound-engineering")
+
+    const opencodeJsonPath = path.join(tempRoot, "opencode.json")
+    const content = await fs.readFile(opencodeJsonPath, "utf-8")
+    const json = JSON.parse(content)
+
+    expect(json).toHaveProperty("permission")
+    expect(json.permission).not.toBeNull()
   })
 })
