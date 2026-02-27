@@ -61,41 +61,21 @@ If a review agent flags any file in these directories for cleanup or removal, di
 
 #### Parallelization Strategy
 
-**Preferred: Agent Team** (requires `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`)
-
-Create an agent team to review the PR. The lead agent coordinates synthesis while reviewer teammates share findings, challenge each other, and avoid duplicate reports.
-
-Spawn teammates:
-- **sglyon-python-reviewer**: Python code review
-- **sglyon-typescript-reviewer**: TypeScript code review
-- **git-history-analyzer**: Historical context analysis
-- **pattern-recognition-specialist**: Pattern and anti-pattern detection
-- **architecture-strategist**: Architectural compliance
-- **security-sentinel**: Security audit
-- **performance-oracle**: Performance analysis
-- **data-integrity-guardian**: Data integrity review
-- **agent-native-reviewer**: Verify new features are agent-accessible
-- **code-simplicity-reviewer**: Simplicity and minimalism pass
-
-Instruct each teammate to `require plan approval` — they should plan their audit scope before executing. Teammates should message each other when they find cross-cutting concerns (e.g., a security issue that also affects performance). The lead coordinates in delegate mode: assigns scope, monitors progress, and synthesizes the final report.
-
-**Fallback: Parallel Subagents**
-
-If agent teams are not available, use parallel Task tool calls instead:
+Launch all review agents as **background subagents** using `run_in_background: true` on the Task tool. This lets all agents work concurrently while the lead coordinates synthesis.
 
 <parallel_tasks>
 
-Run ALL or most of these agents at the same time:
+Run ALL or most of these agents in the background at the same time:
 
-1. Task sglyon-python-reviewer(PR content)
-2. Task sglyon-typescript-reviewer(PR content)
-3. Task git-history-analyzer(PR content)
-4. Task pattern-recognition-specialist(PR content)
-5. Task architecture-strategist(PR content)
-6. Task security-sentinel(PR content)
-7. Task performance-oracle(PR content)
-8. Task data-integrity-guardian(PR content)
-9. Task agent-native-reviewer(PR content) - Verify new features are agent-accessible
+1. Task sglyon-python-reviewer(PR content) — run_in_background: true
+2. Task sglyon-typescript-reviewer(PR content) — run_in_background: true
+3. Task git-history-analyzer(PR content) — run_in_background: true
+4. Task pattern-recognition-specialist(PR content) — run_in_background: true
+5. Task architecture-strategist(PR content) — run_in_background: true
+6. Task security-sentinel(PR content) — run_in_background: true
+7. Task performance-oracle(PR content) — run_in_background: true
+8. Task data-integrity-guardian(PR content) — run_in_background: true
+9. Task agent-native-reviewer(PR content) — run_in_background: true
 
 </parallel_tasks>
 

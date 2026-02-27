@@ -18,23 +18,16 @@ Review a plan using multiple specialized agents working in parallel. Reviewers c
 
 ## Parallelization Strategy
 
-**Preferred: Agent Team** (requires `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`)
+Launch all review agents as **background subagents** using `run_in_background: true` on the Task tool. This lets all reviewers work concurrently while the lead synthesizes findings.
 
-Create an agent team with 3+ reviewer teammates who discuss and debate the plan. Teammates should challenge each other's feedback and cross-reference findings.
+Run these agents in the background at the same time:
 
-Spawn teammates:
-- **sglyon-python-reviewer**: Review plan for Python implementation concerns
-- **sglyon-typescript-reviewer**: Review plan for TypeScript implementation concerns
-- **code-simplicity-reviewer**: Review plan for unnecessary complexity and over-engineering
-- **architecture-strategist**: Review plan for architectural soundness (optional, if plan is architectural)
+1. Task sglyon-python-reviewer(plan content) — run_in_background: true — Review plan for Python implementation concerns
+2. Task sglyon-typescript-reviewer(plan content) — run_in_background: true — Review plan for TypeScript implementation concerns
+3. Task code-simplicity-reviewer(plan content) — run_in_background: true — Review plan for unnecessary complexity and over-engineering
+4. Task architecture-strategist(plan content) — run_in_background: true — Review plan for architectural soundness (optional, if plan is architectural)
 
 The lead synthesizes all reviewer feedback into a prioritized list of recommendations. Where reviewers disagree, present both perspectives.
-
-**Fallback: Parallel Subagents**
-
-If agent teams are not available, use @agent mentions to review in parallel:
-
-Have @agent-sglyon-python-reviewer @agent-sglyon-typescript-reviewer @agent-code-simplicity-reviewer review this plan in parallel.
 
 ## Output Format
 

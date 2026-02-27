@@ -5,6 +5,25 @@ All notable changes to the compound-engineering plugin will be documented in thi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.5.0] - 2026-02-26
+
+### Changed
+
+- **Replaced agent teams with background subagents** across all 5 commands that used them:
+  - `/workflows:review` - Review agents now launched as background subagents instead of agent team teammates
+  - `/deepen-plan` - Research agents now launched as background subagents
+  - `/agent-native-audit` - Principle auditors now launched as background subagents
+  - `/workflows:compound` - Specialist subagents now launched in background
+  - `/plan_review` - Reviewer agents now launched as background subagents
+  - All commands use `run_in_background: true` on Task tool calls for concurrent execution
+  - Removed `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` requirement
+
+### Summary
+
+- 27 agents, 24 commands, 13 skills, 1 MCP server
+
+---
+
 ## [3.4.0] - 2026-02-23
 
 ### Added
@@ -74,7 +93,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Summary
 
 - 24 agents, 24 commands, 13 skills, 1 MCP server
-- Agent teams support requires `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` (experimental)
+- **Note:** Agent teams were replaced with background subagents in v3.5.0
 
 ---
 

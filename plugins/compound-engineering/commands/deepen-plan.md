@@ -21,21 +21,15 @@ The result is a deeply grounded, production-ready plan with concrete implementat
 
 ### Parallelization Strategy
 
-**Preferred: Agent Team** (requires `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`)
+Launch all research and review agents as **background subagents** using `run_in_background: true` on the Task tool. This lets all agents work concurrently while the lead synthesizes results into enhanced plan sections.
 
-Create an agent team to research and enhance the plan. The lead coordinates assignment while research teammates share discoveries, build on each other's findings, and avoid redundant research.
-
-Spawn teammates:
+Spawn background subagents for:
 - **Skill Agents** (1 per matched skill): Each reads and applies its assigned skill to the plan
 - **Learnings Researchers** (1 per relevant learning file): Check if documented solutions apply
 - **Section Researchers** (1 per major plan section): Research best practices and implementation details
 - **Review Agents** (all available reviewers): Review the plan for gaps and improvements
 
-Teammates should message each other when they discover overlapping findings or conflicting recommendations. The lead synthesizes all results into enhanced plan sections.
-
-**Fallback: Parallel Subagents**
-
-If agent teams are not available, use parallel Task tool calls as described in the steps below.
+Use `run_in_background: true` on all Task tool calls as described in the steps below.
 
 ## Plan File
 
