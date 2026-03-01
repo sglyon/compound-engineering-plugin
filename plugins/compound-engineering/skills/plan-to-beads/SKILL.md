@@ -112,39 +112,79 @@ Options:
 3. **Remove items** — Specify tasks to skip
 4. **Add items** — Include additional work items not in the plan
 
-### Phase 3: Create the Epic
+### Phase 3: Write and Execute a Batch Creation Script
 
-Create the top-level epic that groups all child issues:
+**CRITICAL: Performance requirement.** `bd`/`br` auto-flushes to JSONL after every write (~30s each). Creating issues and deps individually is unacceptably slow for plans with 10+ items. ALWAYS write a single bash script that creates everything with `--no-auto-flush`, then flushes once at the end.
+
+**NEVER** run `bd create` or `bd dep add` as individual Bash tool calls in a loop. **NEVER** run multiple `bd`/`br` write commands in parallel — this corrupts the SQLite WAL.
+
+Write a bash script to `/tmp/plan_to_beads_$$.sh` that does ALL of the following in one execution:
 
 ```bash
-bd create "[Plan Title]" \
-  -t epic \
-  -p 1 \
-  -d "Plan: [plan file path]. [1-2 sentence summary of the plan's goal]" \
-  -l plan,[type-label]
+#!/bin/bash
+set -e
+
+# ============================================================
+# Phase 3a: Create the Epic
+# ============================================================
+EPIC_ID=$(bd create "[Plan Title]" \
+  -t epic -p 1 \
+  -d "Plan: [plan file path]. [1-2 sentence summary]" \
+  -l plan,[type-label] \
+  --no-auto-flush --silent)
+echo "Epic: $EPIC_ID"
+
+# ============================================================
+# Phase 3b: Create All Child Issues
+# ============================================================
+# Capture each ID for dependency setup later
+ID_1=$(bd create "[Task 1 description]" \
+  -t [type] -p [0-4] \
+  -d "[Detailed description]" \
+  -l [labels] \
+  --parent "$EPIC_ID" \
+  --no-auto-flush --silent)
+echo "Task 1: $ID_1"
+
+ID_2=$(bd create "[Task 2 description]" \
+  -t [type] -p [0-4] \
+  -d "[Detailed description]" \
+  -l [labels] \
+  --parent "$EPIC_ID" \
+  --no-auto-flush --silent)
+echo "Task 2: $ID_2"
+
+# ... repeat for all tasks ...
+
+# ============================================================
+# Phase 3c: Set Up All Dependencies
+# ============================================================
+# Task 2 depends on Task 1
+bd dep add "$ID_2" "$ID_1" --no-auto-flush --quiet
+# ... repeat for all dependencies ...
+
+# ============================================================
+# Phase 3d: Single flush + verify
+# ============================================================
+echo "Flushing..."
+bd sync --flush-only --quiet
+echo "Checking for cycles..."
+bd dep cycles --quiet
+echo "Done. All issues and deps created."
 ```
 
-Capture the epic ID from output for use as parent in child issues.
+Then execute it in ONE Bash tool call:
+
+```bash
+chmod +x /tmp/plan_to_beads_$$.sh && bash /tmp/plan_to_beads_$$.sh
+```
+
+**This approach creates 30+ issues with full dependency graph in under 60 seconds** instead of 20+ minutes with individual calls.
 
 **Type label mapping:**
 - `feat` plan → label `feature`
 - `fix` plan → label `bugfix`
 - `refactor` plan → label `refactor`
-
-### Phase 4: Create Child Issues
-
-For each work item in the manifest, create a Beads issue as a child of the epic.
-
-**Issue creation template:**
-
-```bash
-bd create "[Task description]" \
-  -t [task|feature|bug|chore] \
-  -p [priority 0-4] \
-  -d "[Detailed description including acceptance criteria from plan]" \
-  -l [phase-label],[domain-labels] \
-  --parent [epic-id]
-```
 
 **Priority assignment rules:**
 
@@ -176,10 +216,6 @@ bd create "[Task description]" \
 | Refactoring | `task` |
 | Review checkpoint (from "Review Checkpoints" section) | `chore` |
 
-### Phase 5: Set Up Dependencies
-
-After all issues are created, establish the dependency graph.
-
 **Dependency sources:**
 
 1. **Explicit plan ordering** — Phase 1 tasks block Phase 2 tasks
@@ -187,24 +223,13 @@ After all issues are created, establish the dependency graph.
 3. **Technical prerequisites** — "Set up database" blocks "Write migrations"
 4. **Testing dependencies** — Implementation tasks block their test tasks
 
-```bash
-# Phase-level: all Phase 1 tasks block Phase 2 start
-bd dep add [phase-2-task-id] [phase-1-task-id]
-
-# Task-level: specific blocking relationships
-bd dep add [blocked-task-id] [blocker-task-id]
-
-# Verify no cycles
-bd dep cycles
-```
-
 **Dependency rules:**
 - Only add dependencies where there is a genuine ordering constraint
 - Do not create dependencies between independent tasks in the same phase
 - Cross-phase dependencies should flow forward (Phase 1 → Phase 2 → Phase 3)
 - Within a phase, minimize dependencies to allow parallel work
 
-### Phase 6: Verify and Report
+### Phase 4: Verify and Report
 
 After all issues and dependencies are created, verify the result.
 

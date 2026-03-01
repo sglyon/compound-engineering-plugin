@@ -281,6 +281,27 @@ bd label remove <id> tag-name     # Remove label
 bd label list-all                 # All labels in use
 ```
 
+**Batch operations (CRITICAL for performance):**
+
+`bd`/`br` auto-flushes to JSONL after every write (~30s each). For bulk operations, ALWAYS use `--no-auto-flush` and flush once at the end. Never run concurrent `bd`/`br` writes — they corrupt the SQLite WAL.
+
+```bash
+# WRONG — each command takes ~30s due to auto-flush
+bd create "Issue 1" -t task -p 1
+bd create "Issue 2" -t task -p 1
+bd dep add issue-2 issue-1
+# Total: ~90 seconds
+
+# RIGHT — write a bash script with --no-auto-flush
+bd create "Issue 1" -t task -p 1 --no-auto-flush --silent
+bd create "Issue 2" -t task -p 1 --no-auto-flush --silent
+bd dep add issue-2 issue-1 --no-auto-flush
+bd sync --flush-only   # One flush at the end
+# Total: ~5 seconds
+```
+
+For creating many issues (10+), write a single bash script that does all creates, deps, and label operations with `--no-auto-flush`, then one `bd sync --flush-only` at the end. Execute the entire script in one Bash tool call.
+
 **Sync with git:**
 ```bash
 bd sync              # Export DB to JSONL (git-tracked)
