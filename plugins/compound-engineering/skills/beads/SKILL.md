@@ -283,24 +283,24 @@ bd label list-all                 # All labels in use
 
 **Batch operations (CRITICAL for performance):**
 
-`bd`/`br` auto-flushes to JSONL after every write (~30s each). For bulk operations, ALWAYS use `--no-auto-flush` and flush once at the end. Never run concurrent `bd`/`br` writes — they corrupt the SQLite WAL.
+`bd` auto-commits to Dolt after every write by default, which can be slow for bulk operations. For bulk operations, use `--dolt-auto-commit batch` to defer commits, then run `bd dolt commit` once at the end. Never run concurrent `bd` writes — they corrupt the SQLite WAL.
 
 ```bash
-# WRONG — each command takes ~30s due to auto-flush
+# WRONG — each command auto-commits individually
 bd create "Issue 1" -t task -p 1
 bd create "Issue 2" -t task -p 1
 bd dep add issue-2 issue-1
-# Total: ~90 seconds
+# Total: slow
 
-# RIGHT — write a bash script with --no-auto-flush
-bd create "Issue 1" -t task -p 1 --no-auto-flush --silent
-bd create "Issue 2" -t task -p 1 --no-auto-flush --silent
-bd dep add issue-2 issue-1 --no-auto-flush
-bd sync --flush-only   # One flush at the end
-# Total: ~5 seconds
+# RIGHT — write a bash script with --dolt-auto-commit batch
+bd create "Issue 1" -t task -p 1 --dolt-auto-commit batch --silent
+bd create "Issue 2" -t task -p 1 --dolt-auto-commit batch --silent
+bd dep add issue-2 issue-1 --dolt-auto-commit batch
+bd dolt commit -m "Batch create issues"   # One commit at the end
+# Total: much faster
 ```
 
-For creating many issues (10+), write a single bash script that does all creates, deps, and label operations with `--no-auto-flush`, then one `bd sync --flush-only` at the end. Execute the entire script in one Bash tool call.
+For creating many issues (10+), write a single bash script that does all creates, deps, and label operations with `--dolt-auto-commit batch`, then one `bd dolt commit` at the end. Execute the entire script in one Bash tool call.
 
 **Sync with git:**
 ```bash

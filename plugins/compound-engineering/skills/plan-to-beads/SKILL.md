@@ -114,9 +114,9 @@ Options:
 
 ### Phase 3: Write and Execute a Batch Creation Script
 
-**CRITICAL: Performance requirement.** `bd`/`br` auto-flushes to JSONL after every write (~30s each). Creating issues and deps individually is unacceptably slow for plans with 10+ items. ALWAYS write a single bash script that creates everything with `--no-auto-flush`, then flushes once at the end.
+**CRITICAL: Performance requirement.** `bd` auto-commits to Dolt after every write by default, which is slow when creating many issues. Creating issues and deps individually is unacceptably slow for plans with 10+ items. ALWAYS write a single bash script that creates everything with `--dolt-auto-commit batch`, then commits once at the end.
 
-**NEVER** run `bd create` or `bd dep add` as individual Bash tool calls in a loop. **NEVER** run multiple `bd`/`br` write commands in parallel — this corrupts the SQLite WAL.
+**NEVER** run `bd create` or `bd dep add` as individual Bash tool calls in a loop. **NEVER** run multiple `bd` write commands in parallel — this corrupts the SQLite WAL.
 
 Write a bash script to `/tmp/plan_to_beads_$$.sh` that does ALL of the following in one execution:
 
@@ -131,7 +131,7 @@ EPIC_ID=$(bd create "[Plan Title]" \
   -t epic -p 1 \
   -d "Plan: [plan file path]. [1-2 sentence summary]" \
   -l plan,[type-label] \
-  --no-auto-flush --silent)
+  --dolt-auto-commit batch --silent)
 echo "Epic: $EPIC_ID"
 
 # ============================================================
@@ -143,7 +143,7 @@ ID_1=$(bd create "[Task 1 description]" \
   -d "[Detailed description]" \
   -l [labels] \
   --parent "$EPIC_ID" \
-  --no-auto-flush --silent)
+  --dolt-auto-commit batch --silent)
 echo "Task 1: $ID_1"
 
 ID_2=$(bd create "[Task 2 description]" \
@@ -151,7 +151,7 @@ ID_2=$(bd create "[Task 2 description]" \
   -d "[Detailed description]" \
   -l [labels] \
   --parent "$EPIC_ID" \
-  --no-auto-flush --silent)
+  --dolt-auto-commit batch --silent)
 echo "Task 2: $ID_2"
 
 # ... repeat for all tasks ...
@@ -160,14 +160,14 @@ echo "Task 2: $ID_2"
 # Phase 3c: Set Up All Dependencies
 # ============================================================
 # Task 2 depends on Task 1
-bd dep add "$ID_2" "$ID_1" --no-auto-flush --quiet
+bd dep add "$ID_2" "$ID_1" --dolt-auto-commit batch --quiet
 # ... repeat for all dependencies ...
 
 # ============================================================
-# Phase 3d: Single flush + verify
+# Phase 3d: Single commit + verify
 # ============================================================
-echo "Flushing..."
-bd sync --flush-only --quiet
+echo "Committing..."
+bd dolt commit -m "Batch create issues from plan"
 echo "Checking for cycles..."
 bd dep cycles --quiet
 echo "Done. All issues and deps created."
