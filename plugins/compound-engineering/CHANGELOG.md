@@ -5,6 +5,19 @@ All notable changes to the compound-engineering plugin will be documented in thi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.6.0] - 2026-03-04
+
+### Fixed
+
+- **`beads` skill** - Added batch operations guidance to prevent slow individual `bd create` calls (~30s each due to auto-flush). Documents the `--no-auto-flush` + single flush pattern.
+- **`plan-to-beads` skill** - Replaced Phases 3-5 with a single batch script approach using `--no-auto-flush` for faster issue creation.
+
+### Summary
+
+- 27 agents, 24 commands, 13 skills, 1 MCP server
+
+---
+
 ## [3.5.0] - 2026-02-26
 
 ### Changed
