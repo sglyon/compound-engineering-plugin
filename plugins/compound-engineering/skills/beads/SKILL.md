@@ -302,9 +302,9 @@ bd dolt commit -m "Batch create issues"   # One commit at the end
 
 For creating many issues (10+), write a single bash script that does all creates, deps, and label operations with `--dolt-auto-commit batch`, then one `bd dolt commit` at the end. Execute the entire script in one Bash tool call.
 
-**Sync with git:**
+**Export and sync with git:**
 ```bash
-bd sync              # Export DB to JSONL (git-tracked)
+bd export            # Export DB to JSONL (git-tracked)
 ```
 
 Two sync topologies:

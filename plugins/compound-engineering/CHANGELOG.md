@@ -9,8 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- **`beads` skill** - Added batch operations guidance to prevent slow individual `bd create` calls (~30s each due to auto-flush). Documents the `--no-auto-flush` + single flush pattern.
-- **`plan-to-beads` skill** - Replaced Phases 3-5 with a single batch script approach using `--no-auto-flush` for faster issue creation.
+- **`beads` skill** - Added batch operations guidance to prevent slow individual `bd create` calls. Documents the `--dolt-auto-commit batch` + single `bd dolt commit` pattern. Fixed `bd sync` → `bd export`.
+- **`plan-to-beads` skill** - Replaced Phases 3-5 with a single batch script approach using `--dolt-auto-commit batch` for faster issue creation.
+- **`triage` command** - Fixed `bd sync` → `bd export`.
+- **`workflows:review` command** - Fixed `bd sync` → `bd export`.
 
 ### Summary
 

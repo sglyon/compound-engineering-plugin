@@ -365,7 +365,7 @@ After creating all issues, present comprehensive summary:
    ```bash
    bd update <id> --claim  # Claim + set in_progress atomically
    bd close <id> --reason "Fixed in commit <sha>"  # Complete
-   bd sync  # Sync to git
+   bd export  # Export to JSONL for git
    ```
 
 ### Severity Breakdown:

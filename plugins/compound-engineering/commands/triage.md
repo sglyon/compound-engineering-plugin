@@ -244,6 +244,6 @@ When done give these options
 What would you like to do next?
 
 1. run /resolve_todo_parallel to resolve the issues
-2. sync beads: `bd sync`
+2. export beads: `bd export`
 3. nothing, go chill
 ```
