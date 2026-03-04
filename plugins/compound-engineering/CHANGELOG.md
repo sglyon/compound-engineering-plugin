@@ -5,6 +5,21 @@ All notable changes to the compound-engineering plugin will be documented in thi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.6.1] - 2026-03-04
+
+### Fixed
+
+- **`beads` skill** - Fixed invalid `bd sync` → `bd export`, `--no-auto-flush` → `--dolt-auto-commit batch`, `bd sync --flush-only` → `bd dolt commit`
+- **`plan-to-beads` skill** - Same batch flag fixes as beads skill
+- **`triage` command** - Fixed `bd sync` → `bd export`
+- **`workflows:review` command** - Fixed `bd sync` → `bd export`
+
+### Summary
+
+- 27 agents, 24 commands, 13 skills, 1 MCP server
+
+---
+
 ## [3.6.0] - 2026-03-04
 
 ### Fixed
