@@ -1,12 +1,19 @@
 {
   "name": "compound-engineering",
-  "version": "3.6.1",
+  "version": "4.0.0",
   "description": "AI-powered development tools. 27 agents, 24 commands, 13 skills, 1 MCP server for code review, research, design, and workflow automation.",
   "author": {
-    "name": "Kieran Klaassen",
-    "email": "kieran@every.to",
-    "url": "https://github.com/kieranklaassen"
+    "name": "Spencer Lyon",
+    "url": "https://github.com/sglyon"
   },
+  "contributors": [
+    {
+      "name": "Kieran Klaassen",
+      "url": "https://github.com/kieranklaassen",
+      "email": "kieran@every.to",
+      "note": "Original author — this plugin evolved from Kieran's compound-engineering work"
+    }
+  ],
   "homepage": "https://every.to/source-code/my-ai-had-already-fixed-the-code-before-i-saw-it",
   "repository": "https://github.com/sglyon/compound-engineering-plugin",
   "license": "MIT",
