@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed (Breaking)
 
-- **Authorship transfer** - Plugin ownership transferred from Kieran Klaassen (@kieranklaassen) to Spencer Lyon (@sglyon). Kieran is preserved in `contributors` as original author and in the LICENSE.
+- **Authorship transfer** - Plugin ownership transferred from Kieran Klaassen (@kieranklaassen) to Spencer Lyon (@sglyon). Kieran is credited as original author in the LICENSE and README.
 - **Removed `coding-tutor` plugin** - Purged from the marketplace; no longer maintained here.
 
 ### Summary

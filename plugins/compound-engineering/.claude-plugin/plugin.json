@@ -6,14 +6,6 @@
     "name": "Spencer Lyon",
     "url": "https://github.com/sglyon"
   },
-  "contributors": [
-    {
-      "name": "Kieran Klaassen",
-      "url": "https://github.com/kieranklaassen",
-      "email": "kieran@every.to",
-      "note": "Original author — this plugin evolved from Kieran's compound-engineering work"
-    }
-  ],
   "homepage": "https://every.to/source-code/my-ai-had-already-fixed-the-code-before-i-saw-it",
   "repository": "https://github.com/sglyon/compound-engineering-plugin",
   "license": "MIT",

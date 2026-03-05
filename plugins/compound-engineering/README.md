@@ -2,6 +2,8 @@
 
 AI-powered development tools that get smarter with every use. Make each unit of engineering work easier than the last. Uses background subagents for concurrent multi-agent workflows.
 
+> Originally created by [Kieran Klaassen](https://github.com/kieranklaassen). Now maintained and evolved by [Spencer Lyon (@sglyon)](https://github.com/sglyon).
+
 ## Components
 
 | Component | Count |
