@@ -13,7 +13,7 @@ argument-hint: "[PR number or 'current'] [optional: base URL, default localhost:
 <role>Developer Relations Engineer creating feature demo videos</role>
 
 This command creates professional video walkthroughs of features for PR documentation:
-- Records browser interactions using agent-browser CLI
+- Records browser interactions using rodney CLI
 - Demonstrates the complete user flow
 - Uploads the video for easy sharing
 - Updates the PR description with an embedded video
@@ -22,7 +22,7 @@ This command creates professional video walkthroughs of features for PR document
 
 <requirements>
 - Local development server running (e.g., `bun dev`, `npm run dev`, `uvicorn main:app`)
-- agent-browser CLI installed
+- rodney CLI installed
 - Git repository with a PR to document
 - `ffmpeg` installed (for video conversion)
 - `rclone` configured (optional, for cloud upload - see rclone skill)
@@ -30,17 +30,13 @@ This command creates professional video walkthroughs of features for PR document
 
 ## Setup
 
-**Check installation:**
+**Check installation and start Chrome:**
 ```bash
-command -v agent-browser >/dev/null 2>&1 && echo "Installed" || echo "NOT INSTALLED"
+command -v rodney >/dev/null 2>&1 && echo "Installed" || echo "NOT INSTALLED"
+rodney status || rodney start
 ```
 
-**Install if needed:**
-```bash
-npm install -g agent-browser && agent-browser install
-```
-
-See the `agent-browser` skill for detailed usage.
+See the `rodney` skill for detailed usage.
 
 ## Main Tasks
 
@@ -134,7 +130,7 @@ mkdir -p tmp/videos
 
 **Recording approach: Use browser screenshots as frames**
 
-agent-browser captures screenshots at key moments, then combine into video using ffmpeg:
+rodney captures screenshots at key moments, then combine into video using ffmpeg:
 
 ```bash
 ffmpeg -framerate 2 -pattern_type glob -i 'tmp/screenshots/*.png' -vf "scale=1280:-1" tmp/videos/feature-demo.gif
@@ -150,31 +146,29 @@ Execute the planned flow, capturing each step:
 
 **Step 1: Navigate to starting point**
 ```bash
-agent-browser open "[base-url]/[start-route]"
-agent-browser wait 2000
-agent-browser screenshot tmp/screenshots/01-start.png
+rodney open "[base-url]/[start-route]"
+rodney waitstable
+rodney screenshot tmp/screenshots/01-start.png
 ```
 
 **Step 2: Perform navigation/interactions**
 ```bash
-agent-browser snapshot -i  # Get refs
-agent-browser click @e1    # Click navigation element
-agent-browser wait 1000
-agent-browser screenshot tmp/screenshots/02-navigate.png
+rodney click 'nav a[href="/feature"]'  # Use CSS selector directly
+rodney waitstable
+rodney screenshot tmp/screenshots/02-navigate.png
 ```
 
 **Step 3: Demonstrate feature**
 ```bash
-agent-browser snapshot -i  # Get refs for feature elements
-agent-browser click @e2    # Click feature element
-agent-browser wait 1000
-agent-browser screenshot tmp/screenshots/03-feature.png
+rodney click 'button.primary-action'  # Use CSS selector for feature element
+rodney waitstable
+rodney screenshot tmp/screenshots/03-feature.png
 ```
 
 **Step 4: Capture result**
 ```bash
-agent-browser wait 2000
-agent-browser screenshot tmp/screenshots/04-result.png
+rodney waitstable
+rodney screenshot tmp/screenshots/04-result.png
 ```
 
 **Create video/GIF from screenshots:**

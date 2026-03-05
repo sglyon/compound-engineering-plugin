@@ -10,7 +10,7 @@ AI-powered development tools that get smarter with every use. Make each unit of 
 |-----------|-------|
 | Agents | 27 |
 | Commands | 24 |
-| Skills | 13 |
+| Skills | 14 |
 | MCP Servers | 1 |
 
 ## Agents
@@ -133,7 +133,7 @@ Core workflow commands use `workflows:` prefix to avoid collisions with built-in
 
 | Skill | Description |
 |-------|-------------|
-| `agent-browser` | CLI-based browser automation using Vercel's agent-browser |
+| `rodney` | Chrome browser automation using the rodney CLI |
 
 ### Image Generation
 
@@ -169,14 +169,17 @@ MCP servers start automatically when the plugin is enabled.
 
 ## Browser Automation
 
-This plugin uses **agent-browser CLI** for browser automation tasks. Install it globally:
+This plugin uses **rodney** for browser automation tasks. Rodney runs a persistent headless Chrome process using CSS selectors — no element discovery step needed.
 
 ```bash
-npm install -g agent-browser
-agent-browser install  # Downloads Chromium
+# Check if installed
+command -v rodney >/dev/null 2>&1 && echo "Installed" || echo "NOT INSTALLED"
+
+# Start Chrome (persists between sessions)
+rodney status || rodney start
 ```
 
-The `agent-browser` skill provides comprehensive documentation on usage.
+The `rodney` skill provides comprehensive documentation on usage.
 
 ## Installation
 

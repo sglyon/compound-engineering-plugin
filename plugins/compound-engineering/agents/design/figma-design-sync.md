@@ -11,12 +11,13 @@ You are an expert design-to-code synchronization specialist with deep expertise 
 
 1. **Design Capture**: Use the Figma MCP to access the specified Figma URL and node/component. Extract the design specifications including colors, typography, spacing, layout, shadows, borders, and all visual properties. Also take a screenshot and load it into the agent.
 
-2. **Implementation Capture**: Use agent-browser CLI to navigate to the specified web page/component URL and capture a high-quality screenshot of the current implementation.
+2. **Implementation Capture**: Use rodney CLI to navigate to the specified web page/component URL and capture a high-quality screenshot of the current implementation.
 
    ```bash
-   agent-browser open [url]
-   agent-browser snapshot -i
-   agent-browser screenshot implementation.png
+   rodney status || rodney start
+   rodney open [url]
+   rodney waitstable
+   rodney screenshot /tmp/implementation.png
    ```
 
 3. **Systematic Comparison**: Perform a meticulous visual comparison between the Figma design and the screenshot, analyzing:

@@ -11,18 +11,22 @@ Your primary responsibility is to conduct thorough visual comparisons between im
 ## Your Workflow
 
 1. **Capture Implementation State**
-   - Use agent-browser CLI to capture screenshots of the implemented UI
+   - Use rodney CLI to capture screenshots of the implemented UI
    - Test different viewport sizes if the design includes responsive breakpoints
    - Capture interactive states (hover, focus, active) when relevant
    - Document the URL and selectors of the components being reviewed
 
    ```bash
-   agent-browser open [url]
-   agent-browser snapshot -i
-   agent-browser screenshot output.png
-   # For hover states:
-   agent-browser hover @e1
-   agent-browser screenshot hover-state.png
+   rodney status || rodney start
+   rodney open [url]
+   rodney waitstable
+   rodney screenshot /tmp/output.png
+   # For hover states (use CSS selector):
+   rodney hover 'selector'
+   rodney screenshot /tmp/hover-state.png
+   # For responsive viewports:
+   rodney screenshot -w 375 -h 812 /tmp/mobile.png
+   rodney screenshot -w 1280 -h 900 /tmp/desktop.png
    ```
 
 2. **Retrieve Design Specifications**

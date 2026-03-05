@@ -6,15 +6,15 @@ argument-hint: "[PR number, branch name, or 'current' for current branch]"
 
 # Browser Test Command
 
-<command_purpose>Run end-to-end browser tests on pages affected by a PR or branch changes using agent-browser CLI.</command_purpose>
+<command_purpose>Run end-to-end browser tests on pages affected by a PR or branch changes using rodney CLI.</command_purpose>
 
-## CRITICAL: Use agent-browser CLI Only
+## CRITICAL: Use rodney CLI Only
 
 **DO NOT use Chrome MCP tools (mcp__claude-in-chrome__*).**
 
-This command uses the `agent-browser` CLI exclusively. The agent-browser CLI is a Bash-based tool from Vercel that runs headless Chromium. It is NOT the same as Chrome browser automation via MCP.
+This command uses the `rodney` CLI exclusively. Rodney is a persistent headless Chrome automation tool using CSS selectors. It is NOT the same as Chrome browser automation via MCP.
 
-If you find yourself calling `mcp__claude-in-chrome__*` tools, STOP. Use `agent-browser` Bash commands instead.
+If you find yourself calling `mcp__claude-in-chrome__*` tools, STOP. Use `rodney` Bash commands instead.
 
 ## Introduction
 
@@ -30,7 +30,7 @@ This command tests affected pages in a real browser, catching issues that unit t
 
 <requirements>
 - Local development server running (e.g., `bun dev`, `npm run dev`, `uvicorn main:app`)
-- agent-browser CLI installed (see Setup below)
+- rodney CLI installed (see Setup below)
 - Git repository with changes to test
 </requirements>
 
@@ -38,25 +38,25 @@ This command tests affected pages in a real browser, catching issues that unit t
 
 **Check installation:**
 ```bash
-command -v agent-browser >/dev/null 2>&1 && echo "Installed" || echo "NOT INSTALLED"
+command -v rodney >/dev/null 2>&1 && echo "Installed" || echo "NOT INSTALLED"
 ```
 
-**Install if needed:**
+**Check if Chrome is already running:**
 ```bash
-npm install -g agent-browser
-agent-browser install  # Downloads Chromium (~160MB)
+rodney status
 ```
 
-See the `agent-browser` skill for detailed usage.
+See the `rodney` skill for detailed usage.
 
 ## Main Tasks
 
-### 0. Verify agent-browser Installation
+### 0. Verify rodney Installation and Start Chrome
 
-Before starting ANY browser testing, verify agent-browser is installed:
+Before starting ANY browser testing, verify rodney is installed and Chrome is running:
 
 ```bash
-command -v agent-browser >/dev/null 2>&1 && echo "Ready" || (echo "Installing..." && npm install -g agent-browser && agent-browser install)
+command -v rodney >/dev/null 2>&1 && echo "rodney installed" || echo "NOT INSTALLED - install rodney first"
+rodney status || rodney start
 ```
 
 If installation fails, inform the user and stop.
@@ -70,10 +70,10 @@ Before starting tests, ask user if they want to watch the browser:
 Use AskUserQuestion with:
 - Question: "Do you want to watch the browser tests run?"
 - Options:
-  1. **Headed (watch)** - Opens visible browser window so you can see tests run
-  2. **Headless (faster)** - Runs in background, faster but invisible
+  1. **Visible (watch)** - Opens visible browser window so you can see tests run (`rodney start --show`)
+  2. **Headless (faster)** - Runs in background, faster but invisible (`rodney start`)
 
-Store the choice and use `--headed` flag when user selects "Headed".
+Store the choice. If Chrome isn't already running, start it with the appropriate flag.
 
 </ask_browser_mode>
 
@@ -128,8 +128,9 @@ Build a list of URLs to test based on the mapping.
 Before testing, verify the local server is accessible:
 
 ```bash
-agent-browser open http://localhost:3000
-agent-browser snapshot -i
+rodney open http://localhost:3000
+rodney waitload
+rodney title  # Should return a page title, not an error
 ```
 
 If server is not running, inform user:
@@ -150,37 +151,33 @@ Then run `/test-browser` again.
 
 <test_pages>
 
-For each affected route, use agent-browser CLI commands (NOT Chrome MCP):
+For each affected route, use rodney CLI commands (NOT Chrome MCP):
 
-**Step 1: Navigate and capture snapshot**
+**Step 1: Navigate and wait for load**
 ```bash
-agent-browser open "http://localhost:3000/[route]"
-agent-browser snapshot -i
+rodney open "http://localhost:3000/[route]"
+rodney waitstable
 ```
 
-**Step 2: For headed mode (visual debugging)**
+**Step 2: Verify key elements using CSS selectors**
 ```bash
-agent-browser --headed open "http://localhost:3000/[route]"
-agent-browser --headed snapshot -i
+rodney exists 'h1'              # Page heading present
+rodney exists 'main'            # Primary content rendered
+rodney exists '.error' && echo "Error visible!"  # Check for errors
+rodney title                    # Confirm page title
 ```
 
-**Step 3: Verify key elements**
-- Use `agent-browser snapshot -i` to get interactive elements with refs
-- Page title/heading present
-- Primary content rendered
-- No error messages visible
-- Forms have expected fields
-
-**Step 4: Test critical interactions**
+**Step 3: Test critical interactions**
 ```bash
-agent-browser click @e1  # Use ref from snapshot
-agent-browser snapshot -i
+rodney click 'button.submit'    # Use CSS selector directly
+rodney waitstable
+rodney exists '.success-message'
 ```
 
-**Step 5: Take screenshots**
+**Step 4: Take screenshots**
 ```bash
-agent-browser screenshot page-name.png
-agent-browser screenshot --full page-name-full.png  # Full page
+rodney screenshot /tmp/page-name.png
+rodney screenshot -w 375 -h 812 /tmp/page-name-mobile.png  # Mobile view
 ```
 
 </test_pages>
@@ -221,7 +218,7 @@ Did it work correctly?
 When a test fails:
 
 1. **Document the failure:**
-   - Screenshot the error state: `agent-browser screenshot error.png`
+   - Screenshot the error state: `rodney screenshot /tmp/error.png`
    - Note the exact reproduction steps
 
 2. **Ask user how to proceed:**
@@ -305,35 +302,45 @@ After all tests complete, present summary:
 /test-browser feature/new-dashboard
 ```
 
-## agent-browser CLI Reference
+## rodney CLI Reference
 
 **ALWAYS use these Bash commands. NEVER use mcp__claude-in-chrome__* tools.**
 
 ```bash
+# Browser lifecycle
+rodney status                      # Check if Chrome is running
+rodney start                       # Start headless Chrome (persists!)
+rodney start --show                # Start visible Chrome (debugging)
+rodney stop                        # Stop Chrome
+
 # Navigation
-agent-browser open <url>           # Navigate to URL
-agent-browser back                 # Go back
-agent-browser close                # Close browser
+rodney open <url>                  # Navigate to URL
+rodney back                        # Go back
+rodney reload                      # Reload page
 
-# Snapshots (get element refs)
-agent-browser snapshot -i          # Interactive elements with refs (@e1, @e2, etc.)
-agent-browser snapshot -i --json   # JSON output
+# Reading page
+rodney title                       # Page title
+rodney text 'selector'             # Element text content
+rodney exists 'selector'           # Exit 0 if element exists
 
-# Interactions (use refs from snapshot)
-agent-browser click @e1            # Click element
-agent-browser fill @e1 "text"      # Fill input
-agent-browser type @e1 "text"      # Type without clearing
-agent-browser press Enter          # Press key
+# Interactions (CSS selectors — no discovery step needed)
+rodney click 'selector'            # Click element
+rodney input 'selector' "text"     # Fill input
+rodney hover 'selector'            # Hover element
+rodney submit 'selector'           # Submit form
 
 # Screenshots
-agent-browser screenshot out.png       # Viewport screenshot
-agent-browser screenshot --full out.png # Full page screenshot
+rodney screenshot /tmp/out.png           # Viewport screenshot
+rodney screenshot -w 1280 -h 900 /tmp/out.png  # At specific viewport
+rodney screenshot-el 'selector' /tmp/el.png    # Single element
 
-# Headed mode (visible browser)
-agent-browser --headed open <url>      # Open with visible browser
-agent-browser --headed click @e1       # Click in visible browser
+# Waiting
+rodney wait 'selector'             # Wait for element to appear
+rodney waitload                    # Wait for page load
+rodney waitstable                  # Wait for DOM to stabilize
+rodney sleep 2                     # Sleep N seconds (avoid when possible)
 
-# Wait
-agent-browser wait @e1             # Wait for element
-agent-browser wait 2000            # Wait milliseconds
+# JavaScript (escape hatch for complex operations)
+rodney js 'document.title'
+rodney js '(() => { var el = document.querySelector("h1"); return el.textContent; })()'
 ```

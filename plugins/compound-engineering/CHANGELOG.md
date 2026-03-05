@@ -5,6 +5,35 @@ All notable changes to the compound-engineering plugin will be documented in thi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.1.0] - 2026-03-05
+
+### Added
+
+- **`rodney` skill** - Chrome browser automation using the rodney CLI (persistent headless Chrome, CSS selectors, no discovery step)
+- **`showboat` skill** - Create executable demo documents that prove an agent's work
+
+### Removed
+
+- **`agent-browser` skill** - Replaced by `rodney`
+
+### Changed
+
+- All browser automation references updated from `agent-browser` to `rodney` across commands and agents:
+  - `/test-browser` command - Full rewrite for rodney CLI
+  - `/feature-video` command - Updated to rodney
+  - `/workflows:work` command - Updated screenshot step
+  - `/workflows:review` command - Updated browser reference
+  - `design-iterator` agent - Updated browser setup
+  - `figma-design-sync` agent - Updated to rodney
+  - `design-implementation-reviewer` agent - Updated to rodney
+  - `bug-reproduction-validator` agent - Updated skill reference
+
+### Summary
+
+- 27 agents, 24 commands, 14 skills, 1 MCP server
+
+---
+
 ## [4.0.1] - 2026-03-05
 
 ### Fixed

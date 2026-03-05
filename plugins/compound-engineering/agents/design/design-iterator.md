@@ -23,10 +23,12 @@ For each iteration cycle, you must:
 
 ### Setup: Set Appropriate Window Size
 
-Before starting iterations, open the browser in headed mode to see and resize as needed:
+Before starting iterations, check if Chrome is running and open the page:
 
 ```bash
-agent-browser --headed open [url]
+rodney status || rodney start --show  # Use --show for visible browser (debugging)
+rodney open [url]
+rodney waitstable
 ```
 
 Recommended viewport sizes for reference:
@@ -36,26 +38,30 @@ Recommended viewport sizes for reference:
 
 ### Taking Element Screenshots
 
-1. First, get element references with `agent-browser snapshot -i`
-2. Find the ref for your target element (e.g., @e1, @e2)
-3. Use `agent-browser scrollintoview @e1` to focus on specific elements
-4. Take screenshot: `agent-browser screenshot output.png`
+Use CSS selectors directly — no discovery step needed.
+
+1. Use `rodney js 'document.querySelector("selector").scrollIntoView({block:"start"})'` to focus on element
+2. Take screenshot: `rodney screenshot /tmp/output.png`
+3. For a single element: `rodney screenshot-el 'selector' /tmp/element.png`
 
 ### Viewport Screenshots
 
-For focused screenshots:
-1. Use `agent-browser scrollintoview @e1` to scroll element into view
-2. Take viewport screenshot: `agent-browser screenshot output.png`
+For responsive testing:
+1. Scroll element into view with `rodney js`
+2. Take viewport screenshot: `rodney screenshot -w 1280 -h 900 /tmp/output.png`
 
 ### Example Workflow
 
 ```bash
-1. agent-browser open [url]
-2. agent-browser snapshot -i  # Get refs
-3. agent-browser screenshot output.png
-4. [analyze and implement changes]
-5. agent-browser screenshot output-v2.png
-6. [repeat...]
+rodney status || rodney start
+rodney open [url]
+rodney waitstable
+rodney screenshot /tmp/output.png
+# [analyze and implement changes]
+rodney reload
+rodney waitstable
+rodney screenshot /tmp/output-v2.png
+# [repeat...]
 ```
 
 **Keep screenshots focused** - capture only the element/area you're working on to reduce noise.
@@ -176,7 +182,7 @@ Key principles to extract from any loaded design skill:
 1. Confirm the target component/file path
 2. Confirm the number of iterations requested (default: 10)
 3. Optionally confirm any competitor sites to research
-4. Set up browser with `agent-browser` for appropriate viewport
+4. Set up browser with `rodney` for appropriate viewport
 5. Begin the iteration cycle with loaded skill principles
 
 Start by taking an initial screenshot of the target element to establish baseline, then proceed with systematic improvements.

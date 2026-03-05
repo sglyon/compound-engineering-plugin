@@ -319,13 +319,14 @@ This command takes a work document (plan, specification, or beads epic) and exec
    npm run dev  # or bun dev, python manage.py runserver, etc.
    ```
 
-   **Step 2: Capture screenshots with agent-browser CLI**
+   **Step 2: Capture screenshots with rodney CLI**
    ```bash
-   agent-browser open http://localhost:3000/[route]
-   agent-browser snapshot -i
-   agent-browser screenshot output.png
+   rodney status || rodney start
+   rodney open http://localhost:3000/[route]
+   rodney waitstable
+   rodney screenshot /tmp/output.png
    ```
-   See the `agent-browser` skill for detailed usage.
+   See the `rodney` skill for detailed usage.
 
    **Step 3: Upload using imgup skill**
    ```bash
