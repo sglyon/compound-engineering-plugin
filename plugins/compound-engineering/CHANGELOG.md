@@ -5,6 +5,18 @@ All notable changes to the compound-engineering plugin will be documented in thi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.1.1] - 2026-03-05
+
+### Added
+
+- **`workflows:work` command** - Optional showboat proof-of-work step (Step 3) for generating reproducible evidence documents before PR creation
+
+### Summary
+
+- 27 agents, 24 commands, 14 skills, 1 MCP server
+
+---
+
 ## [4.1.0] - 2026-03-05
 
 ### Added

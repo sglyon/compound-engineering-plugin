@@ -1,6 +1,6 @@
 {
   "name": "compound-engineering",
-  "version": "4.1.0",
+  "version": "4.1.1",
   "description": "AI-powered development tools. 27 agents, 24 commands, 14 skills, 1 MCP server for code review, research, design, and workflow automation.",
   "author": {
     "name": "Spencer Lyon",
