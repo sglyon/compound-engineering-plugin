@@ -343,7 +343,32 @@ This command takes a work document (plan, specification, or beads epic) and exec
 
    **IMPORTANT**: Always include uploaded image URLs in PR description. This provides visual context for reviewers and documents the change.
 
-3. **Create Pull Request**
+3. **Generate Proof-of-Work Document (Optional)**
+
+   For features that benefit from reproducible evidence — UI changes, complex integrations, data migrations — use `showboat` to create a verifiable demo document. Skip this for trivial changes.
+
+   ```bash
+   # Initialize proof document
+   showboat init /tmp/proof-[feature-name].md "Proof: [Feature Description]"
+
+   # Capture test results
+   showboat note /tmp/proof-[feature-name].md "All tests pass."
+   showboat exec /tmp/proof-[feature-name].md bash "[project test command]"
+
+   # Capture visual evidence (if UI work — reuses rodney from Step 2)
+   showboat note /tmp/proof-[feature-name].md "Visual verification at key breakpoints."
+   showboat exec /tmp/proof-[feature-name].md bash "rodney screenshot -w 375 -h 812 /tmp/mobile.png"
+   showboat image /tmp/proof-[feature-name].md '![Mobile](/tmp/mobile.png)'
+   showboat exec /tmp/proof-[feature-name].md bash "rodney screenshot -w 1280 -h 900 /tmp/desktop.png"
+   showboat image /tmp/proof-[feature-name].md '![Desktop](/tmp/desktop.png)'
+
+   # Verify the document is reproducible
+   showboat verify /tmp/proof-[feature-name].md
+   ```
+
+   See the `showboat` skill for full usage. The resulting markdown document can be linked in the PR description as evidence.
+
+4. **Create Pull Request**
 
    ```bash
    git push -u origin feature-branch-name
@@ -373,7 +398,7 @@ This command takes a work document (plan, specification, or beads epic) and exec
    )"
    ```
 
-4. **Notify User**
+5. **Notify User**
    - Summarize what was completed
    - Link to PR
    - Note any follow-up work needed
