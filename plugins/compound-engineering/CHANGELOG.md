@@ -5,6 +5,23 @@ All notable changes to the compound-engineering plugin will be documented in thi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.2.0] - 2026-03-23
+
+### Added
+
+- **`chartroom` skill** - Create matplotlib charts from CSV, TSV, JSON, JSONL, or SQLite data via the chartroom CLI
+- **`team-lead` skill** - Coordinate multi-agent engineering workflow with implementor, reviewer, and compounder subagents
+
+### Fixed
+
+- Added missing `brainstorming` and `showboat` skills to README skills table
+
+### Summary
+
+- 27 agents, 24 commands, 16 skills, 1 MCP server
+
+---
+
 ## [4.1.1] - 2026-03-05
 
 ### Added

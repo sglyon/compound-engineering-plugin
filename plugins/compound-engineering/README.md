@@ -10,7 +10,7 @@ AI-powered development tools that get smarter with every use. Make each unit of 
 |-----------|-------|
 | Agents | 27 |
 | Commands | 24 |
-| Skills | 14 |
+| Skills | 16 |
 | MCP Servers | 1 |
 
 ## Agents
@@ -109,6 +109,7 @@ Core workflow commands use `workflows:` prefix to avoid collisions with built-in
 
 | Skill | Description |
 |-------|-------------|
+| `chartroom` | Create matplotlib charts from CSV, TSV, JSON, JSONL, or SQLite data |
 | `compound-docs` | Capture solved problems as categorized documentation |
 | `create-agent-skills` | Expert guidance for creating Claude Code skills |
 | `frontend-design` | Create production-grade frontend interfaces |
@@ -118,10 +119,13 @@ Core workflow commands use `workflows:` prefix to avoid collisions with built-in
 
 | Skill | Description |
 |-------|-------------|
-| `every-style-editor` | Review copy for Every's style guide compliance |
 | `beads` | Git-backed issue tracking with Beads (`bd`) CLI |
-| `plan-to-beads` | Convert plan documents into tracked Beads issues with epics and dependencies |
+| `brainstorming` | Explore requirements and approaches through collaborative dialogue |
+| `every-style-editor` | Review copy for Every's style guide compliance |
 | `git-worktree` | Manage Git worktrees for parallel development |
+| `plan-to-beads` | Convert plan documents into tracked Beads issues with epics and dependencies |
+| `showboat` | Create executable demo documents that prove an agent's work |
+| `team-lead` | Coordinate multi-agent implement-review-compound workflow |
 
 ### File Transfer
 
