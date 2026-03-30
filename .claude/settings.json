@@ -1,0 +1,21 @@
+{
+  "enabledPlugins": {
+    "compound-engineering@compound-engineering-plugin": true,
+    "sgldev@sglyon-marketplace": true,
+    "plugin-dev@claude-plugins-official": true
+  },
+  "extraKnownMarketplaces": {
+    "sglyon-marketplace": {
+      "source": {
+        "source": "github",
+        "repo": "sglyon/compound-engineering-plugin"
+      }
+    },
+    "compound-engineering-plugin": {
+      "source": {
+        "source": "github",
+        "repo": "EveryInc/compound-engineering-plugin"
+      }
+    }
+  }
+}
