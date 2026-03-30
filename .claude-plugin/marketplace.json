@@ -10,18 +10,6 @@
   },
   "plugins": [
     {
-      "name": "compound-engineering",
-      "description": "AI-powered development tools that get smarter with every use. Make each unit of engineering work easier than the last. Includes 27 specialized agents, 24 commands, and 16 skills.",
-      "version": "4.2.0",
-      "author": {
-        "name": "Spencer Lyon",
-        "url": "https://github.com/sglyon"
-      },
-      "homepage": "https://github.com/sglyon/compound-engineering-plugin",
-      "tags": ["ai-powered", "compound-engineering", "workflow-automation", "code-review", "quality", "knowledge-management", "image-generation"],
-      "source": "./plugins/compound-engineering"
-    },
-    {
       "name": "sgldev",
       "description": "Spencer Lyon's personal development tools. Includes 5 specialized review agents (Elixir, Ash, LiveView, Python, TypeScript) and 5 skills.",
       "version": "1.0.0",
